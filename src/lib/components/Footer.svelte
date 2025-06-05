@@ -24,6 +24,29 @@
 				<i class="fab fa-linkedin"></i>
 			</div>
 		</div>
+		
+		<div class="footer-column">
+			<h3>Quick Links</h3>
+			<ul>
+				<li><a href="/">Home</a></li>
+				<li><a href="/properties">Property</a></li>
+				<li><a href="/post">Post</a></li>
+				<li><a href="/living">Living</a></li>
+				<li><a href="/contact">Contact</a></li>
+			</ul>
+		</div>
+		
+		<div class="footer-column">
+			<h3>Gallery</h3>
+			<div class="gallery-grid">
+				<img src="/assets/1.jpg" alt="Modern living room" />
+				<img src="/assets/2.jpg" alt="Kitchen design" />
+				<img src="/assets/3.jpg" alt="Bedroom interior" />
+				<img src="/assets/4.jpg" alt="Bathroom design" />
+				<img src="/assets/5.jpg" alt="Outdoor space" />
+				<img src="/assets/6.jpg" alt="Building exterior" />
+			</div>
+		</div>
 	</div>
 	<hr />
 	<p class="footer-text">© 2024 Houseo | All Rights Reserved.</p>
@@ -69,10 +92,33 @@
 		color: var(--text-color);
 	}
 
+	.footer-column li a {
+		text-decoration: none;
+		color: var(--text-color);
+	}
+
+	.footer-column li {
+		list-style-type: none;
+		margin-top: 6px;
+	}
+
 	hr {
 		border: 0;
 		height: 1px;
 		background: var(--text-color);
 		margin: 20px 20px;
+	}
+
+	.gallery-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 4px;
+	}
+
+	.gallery-grid img {
+		border-radius: 6px;
+		height: 50px;
+		object-fit: cover;
+		width: 100%;
 	}
 </style>
