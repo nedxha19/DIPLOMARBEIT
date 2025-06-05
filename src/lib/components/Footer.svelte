@@ -55,6 +55,7 @@
 <style>
 	:root {
 		--footer-bg-color: #3081b4;
+		--accent-color: #ecaecd;
 		--text-color: white;
 	}
 
@@ -62,6 +63,12 @@
 		background-color: var(--footer-bg-color);
 		color: var(--text-color);
 		padding: 30px 5px 10px 5px;
+		position: relative;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		z-index: 998;
 	}
 
 	.footer-container {
@@ -71,15 +78,47 @@
 		margin: 0 auto;
 	}
 
+	.footer-column h3 {
+		position: relative;
+		display: inline-block;
+		margin-bottom: 5px;
+	}
+
+	.footer-column h3::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: -3px;
+		width: 100%;
+		height: 2px;
+		background: var(--accent-color);
+		transform: scaleX(0);
+		transition: transform 0.3s ease;
+	}
+
+	.footer-column h3:hover::after {
+		transform: scaleX(1);
+	}
+
 	.footer-column {
 		flex: 1;
 		padding: 0 20px;
+	}
+
+	.footer-icons {
+		margin-top: 10px;
 	}
 
 	.footer-icons i {
 		margin-right: 10px;
 		color: var(--text-color);
 		margin-top: 10px;
+		transition: all 0.3s ease;
+	}
+
+	.footer-icons i:hover {
+		color: var(--accent-color);
+		transform: translateY(-3px);
 	}
 
 	.footer-column p {
@@ -90,11 +129,33 @@
 		text-align: center;
 		margin: 10px 0;
 		color: var(--text-color);
+		transition: color 0.3s ease;
+	}
+
+	.footer-text:hover {
+		color: var(--accent-color);
+	}
+
+	.footer-column img {
+		width: 100%;
+		height: auto;
+		margin-top: 5px;
+		border-radius: 10px;
+		transition: transform 0.3s ease;
+	}
+
+	.gallery-grid img:hover {
+		transform: scale(1.05);
 	}
 
 	.footer-column li a {
 		text-decoration: none;
 		color: var(--text-color);
+		transition: color 0.3s ease;
+	}
+
+	.footer-column li a:hover {
+		color: var(--accent-color);
 	}
 
 	.footer-column li {
@@ -119,6 +180,27 @@
 		border-radius: 6px;
 		height: 50px;
 		object-fit: cover;
-		width: 100%;
+	}
+
+	@media (max-width: 768px) {
+		.footer-container {
+			flex-direction: column;
+			align-items: center;
+		}
+		.footer-column {
+			margin-bottom: 20px;
+			text-align: center;
+			width: 100%;
+			max-width: 400px;
+		}
+		.gallery-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 480px) {
+		.gallery-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>
