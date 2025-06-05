@@ -52,4 +52,47 @@
     top: 0;
     z-index: 1000;                  /* Ensure navbar stays on top */
   }
+   /* Navigation list styling */
+  nav ul {
+    display: flex;
+    list-style: none;
+    margin-right: 40px;
+  }
+  
+  nav ul li {
+    margin: 0 15px;
+  }
+  
+  nav a {
+    color: var(--text-color);
+    font-size: 17px;
+    font-weight: 600;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+  
+  /* Logo styling */
+  .logo {
+    color: var(--text-color);
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 43px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
 </style>
+<!-- Navbar.svelte -->
+<nav>
+  <h1 class="logo">Houseo</h1>
+  <ul>
+    <li><a href="/home">Home</a></li>
+    <li><a href="/properties">Property</a></li>
+    <li><a href="/post">Post</a></li>
+    <li><a href="/living">Living</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+</nav>
+
