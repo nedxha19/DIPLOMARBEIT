@@ -10,20 +10,18 @@ export const load = async ({ locals }) => {
 
 export const actions = {
   register: async ({ request }) => {
-    const data = await request.formData();
-    const email = data.get('email');
-    const username = data.get('username');
-    const password = data.get('password');
-    const confirm = data.get('confirmPassword');
+    const formData = await request.formData();
+    const email = formData.get('email');
+    const username = formData.get('username');
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirmPassword');
 
     if (!validateEmail(email)) return { success: false, message: 'Invalid email format' };
-    if (!username || username.length < 3) return { success: false, message: 'Username too short' };
-    if (!validatePassword(password)) return { success: false, message: 'Password too weak' };
-    if (password !== confirm) return { success: false, message: 'Passwords do not match' };
+    if (!username || username.length < 3) return { success: false, message: 'Username must be at least 3 characters' };
+    if (!validatePassword(password)) return { success: false, message: 'Password must be at least 8 characters' };
+    if (password !== confirmPassword) return { success: false, message: 'Passwords do not match' };
 
     const result = await register(email, username, password);
-    if (!result.success) return result;
-
-    throw redirect(302, '/admin/login');
+    return result.success ? { success: true, message: 'User registered successfully' } : result;
   }
 };

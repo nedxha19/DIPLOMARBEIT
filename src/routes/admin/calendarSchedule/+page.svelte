@@ -2,6 +2,7 @@
 <script>
 	import { onMount } from 'svelte';
 
+	// State management
 	let today = new Date();
 	let activeDay = today.getDate();
 	let month = today.getMonth();
@@ -11,72 +12,68 @@
 	let taskName = '', taskAuthor = '', taskDescription = '', taskDate = '';
 	let selectedTasks = [];
 	let errorMsg = '';
+	let eventsArr = [];
 
 	const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-	let eventsArr = [];
-	let eventLookup = new Map();
-
-	// === INIT ===
+	// Initialize on mount
 	onMount(() => {
 		const stored = localStorage?.getItem('events');
 		if (stored) eventsArr = JSON.parse(stored);
-		rebuildEventLookup();
 		updateTasks(activeDay);
 	});
 
-	$: rebuildEventLookup();
+	// Reactive updates
 	$: updateTasks(activeDay);
 
-	// Helper functions
+	// Utility functions
 	const daysInMonth = (m, y) => new Date(y, m + 1, 0).getDate();
 	const getDayOfWeek = (y, m, d) => new Date(y, m, d).toLocaleDateString('en-US', { weekday: 'short' });
-	const getKey = (d, m, y) => `${d}-${m}-${y}`;
-
-	function rebuildEventLookup() {
-		eventLookup.clear();
-		eventsArr.forEach(ev => eventLookup.set(getKey(ev.day, ev.month, ev.year), true));
-	}
-
-	const hasTask = (d) => eventLookup.has(getKey(d, month + 1, year));
-	const isToday = (d) => {
-		const now = new Date();
-		return d === now.getDate() && month === now.getMonth() && year === now.getFullYear();
-	};
+	const hasTask = (d) => eventsArr.some(e => e.day === d && e.month === month + 1 && e.year === year);
+	const isToday = (d) => d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
 	const selectDay = (d) => (activeDay = d);
+	const saveEvents = () => localStorage?.setItem('events', JSON.stringify(eventsArr));
 
 	function updateTasks(d) {
-		const found = eventsArr.find((e) => e.day === d && e.month === month + 1 && e.year === year);
+		const found = eventsArr.find(e => e.day === d && e.month === month + 1 && e.year === year);
 		selectedTasks = found?.events ?? [];
-		saveEvents();
 	}
 
 	function prevMonth() {
-		month = month === 0 ? 11 : month - 1;
-		year = month === 11 ? year - 1 : year;
+		if (month === 0) {
+			month = 11;
+			year--;
+		} else {
+			month--;
+		}
 		activeDay = 1;
 	}
 
 	function nextMonth() {
-		month = month === 11 ? 0 : month + 1;
-		year = month === 0 ? year + 1 : year;
+		if (month === 11) {
+			month = 0;
+			year++;
+		} else {
+			month++;
+		}
 		activeDay = 1;
 	}
 
 	function gotoDate() {
 		const [m, y] = dateInput.split('/').map(Number);
-		if (m >= 1 && m <= 12 && y.toString().length === 4) {
+		if (m >= 1 && m <= 12 && y > 1900 && y < 2100) {
 			month = m - 1;
 			year = y;
 			activeDay = 1;
+			dateInput = '';
 		} else {
-			alert('Invalid Date');
+			errorMsg = 'Invalid date format. Use MM/YYYY';
 		}
 	}
 
 	function addTask() {
 		errorMsg = '';
-		if (!taskName || !taskAuthor || !taskDescription || !taskDate) {
+		if (!taskName?.trim() || !taskAuthor?.trim() || !taskDescription?.trim() || !taskDate) {
 			errorMsg = 'Please fill all fields.';
 			return;
 		}
@@ -86,17 +83,17 @@
 		const m = dateObj.getMonth() + 1;
 		const y = dateObj.getFullYear();
 
-		const existing = eventsArr.find((e) => e.day === d && e.month === m && e.year === y);
-		if (existing?.events.some((ev) => ev.name === taskName)) {
+		const existing = eventsArr.find(e => e.day === d && e.month === m && e.year === y);
+		if (existing?.events.some(ev => ev.name.toLowerCase() === taskName.trim().toLowerCase())) {
 			errorMsg = 'Task name must be unique for this day.';
 			return;
 		}
 
 		const newTask = {
 			id: crypto.randomUUID(),
-			name: taskName,
-			author: taskAuthor,
-			description: taskDescription,
+			name: taskName.trim(),
+			author: taskAuthor.trim(),
+			description: taskDescription.trim(),
 			date: taskDate,
 			done: false
 		};
@@ -107,53 +104,47 @@
 			eventsArr.push({ day: d, month: m, year: y, events: [newTask] });
 		}
 
-		rebuildEventLookup();
 		month = m - 1;
 		year = y;
 		activeDay = d;
-		updateTasks(d);
-
 		taskName = taskAuthor = taskDescription = taskDate = '';
 		showAddTask = false;
+		saveEvents();
 	}
 
 	const toggleDone = (task) => {
 		task.done = !task.done;
 		saveEvents();
-		updateTasks(activeDay);
 	};
 
-	const saveEvents = () => localStorage?.setItem('events', JSON.stringify(eventsArr));
-
 	const gotoToday = () => {
-		const now = new Date();
-		month = now.getMonth();
-		year = now.getFullYear();
-		activeDay = now.getDate();
+		month = today.getMonth();
+		year = today.getFullYear();
+		activeDay = today.getDate();
 	};
 </script>
 
 <div class="admin-container">
-	<header class="page-header">
-		<div class="header-content">
-			<div class="header-icon">
+	<header class="admin-page-header">
+		<div class="admin-header-content">
+			<div class="admin-header-icon">
 				<i class="fas fa-calendar-alt"></i>
 			</div>
-			<div class="header-text">
+			<div class="admin-header-text">
 				<h1>Calendar Schedule</h1>
 				<p>Manage appointments, tasks and property viewing schedules</p>
 			</div>
 		</div>
-		<div class="header-stats">
-			<div class="stat-card">
+		<div class="admin-header-stats">
+			<div class="admin-stat-card">
 				<i class="fas fa-calendar-day"></i>
-				<span class="stat-number">{getDayOfWeek(year, month, activeDay)}</span>
-				<span class="stat-label">Today</span>
+				<span class="admin-stat-number">{getDayOfWeek(year, month, activeDay)}</span>
+				<span class="admin-stat-label">Today</span>
 			</div>
-			<div class="stat-card">
+			<div class="admin-stat-card">
 				<i class="fas fa-tasks"></i>
-				<span class="stat-number">{selectedTasks.length}</span>
-				<span class="stat-label">Tasks</span>
+				<span class="admin-stat-number">{selectedTasks.length}</span>
+				<span class="admin-stat-label">Tasks</span>
 			</div>
 		</div>
 	</header>
@@ -327,94 +318,8 @@
 </div>
 
 <style>
-    /* === OPTIMIZED CALENDAR SCHEDULE STYLES === */
+    /* Calendar Schedule Styles - Global header classes handle header styling */
     
-    /* Header Section - Streamlined */
-    .page-header {
-        background: var(--gradient-header);
-        border-radius: var(--radius-xl);
-        padding: var(--space-8);
-        color: var(--text-white);
-        margin-bottom: var(--space-8);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: var(--shadow-xl);
-    }
-
-    .header-content {
-        display: flex;
-        align-items: center;
-        gap: var(--space-6);
-    }
-
-    .header-icon {
-        width: 64px;
-        height: 64px;
-        background: var(--gradient-button);
-        border-radius: var(--radius-xl);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: var(--font-size-2xl);
-        box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-    }
-
-    .header-text h1 {
-        margin: 0 0 var(--space-2) 0;
-        font-size: var(--font-size-3xl);
-        font-weight: var(--font-weight-bold);
-        line-height: var(--line-height-tight);
-        font-family: var(--font-family-sans);
-    }
-
-    .header-text p {
-        margin: 0;
-        opacity: 0.9;
-        font-size: var(--font-size-base);
-        line-height: var(--line-height-normal);
-        font-family: var(--font-family-sans);
-    }
-
-    .header-stats {
-        display: flex;
-        gap: var(--space-4);
-    }
-
-    .stat-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: var(--radius-lg);
-        padding: var(--space-4);
-        text-align: center;
-        min-width: 80px;
-    }
-
-    .stat-card i {
-        display: block;
-        font-size: var(--font-size-xl);
-        margin-bottom: var(--space-2);
-        color: var(--accent-color);
-    }
-
-    .stat-number {
-        display: block;
-        font-size: var(--font-size-2xl);
-        font-weight: var(--font-weight-bold);
-        line-height: var(--line-height-tight);
-        font-family: var(--font-family-sans);
-    }
-
-    .stat-label {
-        display: block;
-        font-size: var(--font-size-xs);
-        opacity: 0.8;
-        margin-top: var(--space-1);
-        font-family: var(--font-family-sans);
-    }
-
-    /* === OPTIMIZED CALENDAR LAYOUT === */
     .calendar-content {
         display: flex;
         flex-direction: column;
@@ -422,40 +327,36 @@
     }
 
     .calendar-wrapper {
-        background: #ffffff;
+        background: var(--bg-primary);
         border-radius: var(--radius-xl);
         box-shadow: var(--shadow-xl);
-        border: 1px solid var(--border-medium);
+        border: 1px solid var(--border-light);
         overflow: hidden;
     }
 
-    /* === MONTH NAVIGATION === */
+    /* Month Navigation */
     .month-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-        padding: var(--spacing-6);
-        margin-bottom: 0;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border-bottom: 2px solid var(--border-medium);
-        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-	}
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-6);
+        background: var(--bg-accent);
+        border-bottom: 1px solid var(--border-light);
+    }
 
-        .nav-btn {
+    .nav-btn {
         display: flex;
         align-items: center;
-        justify-content: center;
         gap: var(--space-2);
         padding: var(--space-3) var(--space-4);
         background: var(--bg-secondary);
         border: 1px solid var(--border-medium);
-        border-radius: var(--radius-base);
+        border-radius: var(--radius-md);
         color: var(--text-primary);
         cursor: pointer;
         transition: var(--transition-normal);
         font-size: var(--font-size-sm);
-        font-weight: var(--font-weight-bold);
-        font-family: var(--font-family-sans);
+        font-weight: var(--font-weight-medium);
     }
 
     .nav-btn:hover,
@@ -463,128 +364,98 @@
         background: var(--accent-color);
         color: var(--text-white);
         border-color: var(--accent-color);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
         outline: none;
     }
-    
-    .nav-btn:focus {
-        box-shadow: var(--shadow-md), 0 0 0 2px var(--accent-color);
-    }
 
-        .nav-btn svg {
+    .nav-btn svg {
         width: 16px;
         height: 16px;
     }
 
-    .month-header .admin-heading-2 {
+    .month-header h2 {
         color: var(--text-primary);
         margin: 0;
         font-weight: var(--font-weight-bold);
         font-size: var(--font-size-2xl);
-        font-family: var(--font-family-sans);
     }
 
-    /* === CALENDAR GRID === */
+    /* Calendar Grid */
     .calendar-grid {
-        margin-bottom: var(--admin-space-6);
-	}
+        margin-bottom: var(--space-6);
+    }
 
-        .weekdays {
+    .weekdays {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        padding: var(--spacing-4);
-        margin-bottom: 0;
-        background: #f8f9fa;
-        border-bottom: 2px solid var(--border-medium);
+        background: var(--bg-accent);
+        border-bottom: 1px solid var(--border-light);
     }
 
-        .weekday {
+    .weekday {
         text-align: center;
         font-weight: var(--font-weight-bold);
-        color: var(--text-primary);
+        color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        padding: var(--space-4);
-        font-size: var(--font-size-base);
-        font-family: var(--font-family-sans);
+        padding: var(--space-3);
+        font-size: var(--font-size-sm);
     }
 
     .days-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 2px;
-        padding: var(--spacing-4);
-        background: var(--border-medium);
+        gap: 1px;
+        padding: var(--space-4);
+        background: var(--border-light);
     }
 
-        .day {
+    .day {
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-medium);
-        border-radius: var(--radius-base);
+        background: var(--bg-primary);
+        border: none;
         color: var(--text-primary);
-        font-weight: var(--font-weight-bold);
-        font-family: var(--font-family-sans);
+        font-weight: var(--font-weight-medium);
         cursor: pointer;
         transition: var(--transition-normal);
-        height: 60px;
-        min-height: 60px;
-        font-size: var(--font-size-lg);
+        height: 48px;
+        font-size: var(--font-size-base);
     }
 
     .day:hover {
-        background: var(--info-light);
-        border-color: var(--accent-color);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
+        background: var(--accent-light);
         color: var(--accent-dark);
-        font-weight: var(--font-weight-bold);
     }
 
     .day.empty-day {
         background: var(--bg-accent);
-		border: 1px solid var(--border-light);
         cursor: default;
         color: var(--text-muted);
-        font-weight: var(--font-weight-normal);
     }
 
     .day.empty-day:hover {
         background: var(--bg-accent);
-        transform: none;
-        box-shadow: none;
         color: var(--text-muted);
-        font-weight: var(--font-weight-normal);
-	}
+    }
 
     .day.today {
         background: var(--accent-color);
         color: var(--text-white);
         font-weight: var(--font-weight-bold);
-        box-shadow: var(--shadow-xl);
-        border-color: var(--accent-color);
-        border-width: 2px;
-	}
+    }
 
     .day.active {
         background: var(--primary-color);
         color: var(--text-white);
-        border-color: var(--primary-color);
         font-weight: var(--font-weight-bold);
-        border-width: 2px;
-        box-shadow: var(--shadow-lg);
-	}
+    }
 
     .day.has-task {
-        background: #e8f5e8;
-        border-color: var(--success-color);
+        background: var(--success-light);
+        color: var(--success-dark);
         font-weight: var(--font-weight-bold);
-        color: #047857;
-        border-width: 2px;
     }
 
     .task-indicator {
@@ -593,62 +464,62 @@
         right: 4px;
         width: 6px;
         height: 6px;
-        background: var(--admin-success);
+        background: var(--success-color);
         border-radius: 50%;
-	}
+    }
 
-    /* === CALENDAR CONTROLS === */
+    /* Calendar Controls */
     .calendar-controls {
-		display: flex;
-		justify-content: space-between;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        padding: var(--admin-space-4);
-        background: var(--admin-bg-accent);
-        border-radius: var(--admin-radius-lg);
+        padding: var(--space-4);
+        background: var(--bg-accent);
+        border-top: 1px solid var(--border-light);
     }
 
     .date-picker {
         display: flex;
-        gap: var(--admin-space-3);
+        gap: var(--space-3);
         align-items: center;
-	}
+    }
 
     .date-picker .admin-input {
         width: 120px;
     }
 
-        /* === TASKS PANEL === */
+    /* Tasks Panel */
     .tasks-panel {
         width: 100%;
     }
 
     .tasks-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-        margin-bottom: var(--admin-space-6);
-        padding-bottom: var(--admin-space-4);
-        border-bottom: 2px solid var(--admin-border-light);
-	}
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-6);
+        padding-bottom: var(--space-4);
+        border-bottom: 1px solid var(--border-light);
+    }
 
     .selected-date {
-		display: flex;
-		flex-direction: column;
-        gap: var(--admin-space-1);
-	}
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+    }
 
     .day-name {
-        font-size: var(--admin-text-sm);
-        color: var(--admin-text-secondary);
-        font-weight: 600;
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        font-weight: var(--font-weight-semibold);
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
 
     .date-display {
-        font-size: var(--admin-text-lg);
-        color: var(--admin-text-primary);
-        font-weight: 700;
+        font-size: var(--font-size-lg);
+        color: var(--text-primary);
+        font-weight: var(--font-weight-bold);
     }
 
     .tasks-header .admin-button-primary svg {
@@ -656,108 +527,103 @@
         height: 16px;
     }
 
-        /* === TASKS LIST === */
+    /* Tasks List */
     .tasks-list {
         display: grid;
-        gap: var(--admin-space-4);
-        overflow-y: auto;
+        gap: var(--space-4);
     }
 
     .task-item {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        padding: var(--admin-space-4);
-        background: var(--admin-bg-accent);
-        border: 1px solid var(--admin-border-light);
-        border-radius: var(--admin-radius-lg);
-        gap: var(--admin-space-4);
-        transition: var(--admin-transition-normal);
-	}
+        padding: var(--space-4);
+        background: var(--bg-accent);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        gap: var(--space-4);
+        transition: var(--transition-normal);
+    }
 
     .task-item:hover {
-        background: var(--admin-bg-secondary);
-        border-color: var(--admin-accent);
-        transform: translateY(-1px);
-        box-shadow: var(--admin-shadow-md);
-	}
+        background: var(--bg-secondary);
+        border-color: var(--accent-color);
+    }
 
     .task-item.completed {
         opacity: 0.7;
-        background: var(--admin-success-light);
-        border-color: var(--admin-success);
-	}
+        background: var(--success-light);
+    }
 
     .task-content {
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: var(--admin-space-2);
-	}
+        gap: var(--space-2);
+    }
 
     .task-title {
         display: flex;
         align-items: center;
-        gap: var(--admin-space-3);
-	}
+        gap: var(--space-3);
+    }
 
     .task-title input[type="checkbox"] {
-		width: 18px;
-		height: 18px;
-		cursor: pointer;
-	}
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
 
     .task-title .admin-text-label {
         margin: 0;
-        color: var(--admin-text-primary) !important;
+        color: var(--text-primary) !important;
     }
 
     .task-item.completed .task-title .admin-text-label {
         text-decoration: line-through;
-        color: var(--admin-text-muted) !important;
+        color: var(--text-muted) !important;
     }
 
     .task-author {
-        font-size: var(--admin-text-sm);
-        color: var(--admin-text-secondary);
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
         margin: 0;
-		font-weight: 500;
-	}
+        font-weight: var(--font-weight-medium);
+    }
 
     .task-description {
         margin: 0;
-        color: var(--admin-text-secondary) !important;
-	}
+        color: var(--text-secondary) !important;
+    }
 
     .task-toggle {
-        padding: var(--admin-space-2) var(--admin-space-4);
-        background: var(--admin-success);
-        color: var(--admin-text-white);
-		border: none;
-        border-radius: var(--admin-radius-md);
-        font-size: var(--admin-text-sm);
-        font-weight: 600;
-		cursor: pointer;
-        transition: var(--admin-transition-normal);
+        padding: var(--space-2) var(--space-4);
+        background: var(--success-color);
+        color: var(--text-white);
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        cursor: pointer;
+        transition: var(--transition-normal);
         white-space: nowrap;
-	}
+    }
 
     .task-toggle:hover {
-		background: var(--success-color);
-        transform: translateY(-1px);
-	}
+        background: var(--success-dark);
+    }
 
     .task-item.completed .task-toggle {
-        background: var(--admin-secondary);
-	}
+        background: var(--text-secondary);
+    }
 
     .no-tasks {
-		text-align: center;
-        padding: var(--admin-space-8);
-        color: var(--admin-text-muted);
-	}
+        text-align: center;
+        padding: var(--space-8);
+        color: var(--text-muted);
+    }
 
-    /* === TASK MODAL === */
+    /* Task Modal */
     .task-modal-overlay {
         position: fixed;
         top: 0;
@@ -774,48 +640,43 @@
     .task-modal {
         width: 100%;
         max-width: 500px;
-        margin: var(--admin-space-4);
+        margin: var(--space-4);
         padding: 0;
         overflow: hidden;
-}
+    }
 
     .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-        padding: var(--admin-space-6);
-        background: var(--admin-gradient-header);
-        color: var(--admin-text-white);
-}
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-6);
+        background: var(--gradient-header);
+        color: var(--text-white);
+    }
 
     .modal-header .admin-heading-2 {
-        color: var(--admin-text-white) !important;
+        color: var(--text-white) !important;
         margin: 0;
     }
 
-        .close-btn {
+    .close-btn {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: var(--admin-space-2);
-        padding: var(--admin-space-2) var(--admin-space-3);
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
         background: rgba(255, 255, 255, 0.1);
-        border-radius: var(--admin-radius-md);
-        color: var(--admin-text-white);
+        border-radius: var(--radius-md);
+        color: var(--text-white);
         cursor: pointer;
-        transition: var(--admin-transition-normal);
-        font-size: var(--admin-text-sm);
-        font-weight: 600;
+        transition: var(--transition-normal);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
     }
 
     .close-btn:hover,
     .close-btn:focus {
         background: rgba(255, 255, 255, 0.2);
         outline: none;
-    }
-    
-    .close-btn:focus {
-        box-shadow: 0 0 0 2px var(--accent-color);
     }
 
     .close-btn svg {
@@ -824,337 +685,113 @@
     }
 
     .modal-form {
-        padding: var(--admin-space-6);
+        padding: var(--space-6);
     }
 
     .form-group {
-  display: flex;
-  flex-direction: column;
-        gap: var(--admin-space-2);
-        margin-bottom: var(--admin-space-5);
-}
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        margin-bottom: var(--space-5);
+    }
 
     .form-group .admin-text-label {
-        color: var(--admin-text-label) !important;
+        color: var(--text-label) !important;
     }
 
     .error-message {
-        background: var(--admin-error-light);
-        color: var(--admin-error);
-        padding: var(--admin-space-3);
-        border-radius: var(--admin-radius-md);
-        font-size: var(--admin-text-sm);
-        font-weight: 500;
-        margin-bottom: var(--admin-space-4);
-}
+        background: var(--error-light);
+        color: var(--error-color);
+        padding: var(--space-3);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        margin-bottom: var(--space-4);
+    }
 
     .modal-actions {
         display: flex;
-        gap: var(--admin-space-3);
+        gap: var(--space-3);
         justify-content: flex-end;
-        margin-top: var(--admin-space-6);
-        padding-top: var(--admin-space-4);
-        border-top: 1px solid var(--admin-border-light);
-}
+        margin-top: var(--space-6);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--border-light);
+    }
 
     .cancel-btn {
-        padding: var(--admin-space-3) var(--admin-space-6);
-        background: var(--admin-bg-secondary);
-        color: var(--admin-text-secondary);
-        border: 1px solid var(--admin-border-medium);
-        border-radius: var(--admin-radius-md);
-        font-weight: 600;
-  cursor: pointer;
-        transition: var(--admin-transition-normal);
-}
+        padding: var(--space-3) var(--space-6);
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        font-weight: var(--font-weight-semibold);
+        cursor: pointer;
+        transition: var(--transition-normal);
+    }
 
     .cancel-btn:hover {
-        background: var(--admin-bg-accent);
-        border-color: var(--admin-accent);
-        color: var(--admin-text-primary);
-}
+        background: var(--bg-accent);
+        border-color: var(--accent-color);
+        color: var(--text-primary);
+    }
 
-    /* === PROFESSIONAL MOBILE-FIRST RESPONSIVE DESIGN === */
-    
-    /* Mobile Styles */
+    /* Responsive Design */
     @media (max-width: 768px) {
-        .page-header {
-            padding: var(--admin-space-6);
+        .admin-page-header {
             flex-direction: column;
-            gap: var(--admin-space-4);
             text-align: center;
+            gap: var(--space-4);
         }
-        
-        .header-stats {
-            justify-content: center;
-        }
-    }
 
-    .tasks-panel {
-        padding: var(--admin-space-4);
-    }
-
-    .month-header {
-        flex-direction: column;
-        gap: var(--admin-space-4);
-        text-align: center;
-    }
-
-    .nav-btn {
-        padding: var(--admin-space-2) var(--admin-space-4);
-        font-size: var(--admin-text-xs);
-    }
-
-    .nav-btn svg {
-        width: 14px;
-        height: 14px;
-    }
-
-    .days-grid {
-        gap: var(--admin-space-1);
-    }
-
-    .day {
-        min-height: 36px;
-        font-size: var(--admin-text-sm);
-        padding: var(--admin-space-1);
-    }
-
-    .weekday {
-        padding: var(--admin-space-2);
-        font-size: var(--admin-text-xs);
-    }
-
-    .calendar-controls {
-        flex-direction: column;
-        gap: var(--admin-space-3);
-        padding: var(--admin-space-3);
-    }
-
-    .date-picker {
-        flex-direction: column;
-        gap: var(--admin-space-2);
-        align-items: stretch;
-    }
-
-    .date-picker .admin-input {
-        width: 100%;
-    }
-
-    .tasks-header {
-        flex-direction: column;
-        gap: var(--admin-space-3);
-        align-items: stretch;
-        text-align: center;
-    }
-
-    .tasks-header .admin-button-primary {
-        justify-content: center;
-        width: 100%;
-    }
-
-    .tasks-list {
-        grid-template-columns: 1fr;
-    }
-
-    .task-item {
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--admin-space-3);
-    }
-
-    .task-toggle {
-        align-self: stretch;
-        text-align: center;
-    }
-
-    .task-modal {
-        margin: var(--admin-space-2);
-        max-height: calc(100vh - var(--admin-space-4));
-        overflow-y: auto;
-    }
-
-    .modal-form {
-        padding: var(--admin-space-4);
-    }
-
-    .modal-actions {
-        flex-direction: column;
-        gap: var(--admin-space-3);
-    }
-
-    .modal-actions button {
-        width: 100%;
-        justify-content: center;
-    }
-
-    /* Small Mobile Landscape (480px+) */
-    @media (min-width: 480px) {
         .month-header {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            text-align: left;
-        }
-
-        .nav-btn {
-            padding: var(--admin-space-3) var(--admin-space-4);
-            font-size: var(--admin-text-sm);
-        }
-
-        .nav-btn svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .day {
-            min-height: 40px;
-            font-size: var(--admin-text-base);
-        }
-
-        .date-picker {
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .date-picker .admin-input {
-            width: 140px;
-        }
-
-        .tasks-header {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            text-align: left;
-        }
-
-        .tasks-header .admin-button-primary {
-            width: auto;
-        }
-
-        .modal-actions {
-            flex-direction: row;
-            justify-content: flex-end;
-        }
-
-        .modal-actions button {
-            width: auto;
-        }
-    }
-
-    /* Tablet Portrait (640px+) */
-    @media (min-width: 640px) {
-        .calendar-content {
-            padding: var(--admin-space-5);
-            gap: var(--admin-space-5);
-        }
-
-        .calendar-wrapper,
-        .tasks-panel {
-            padding: var(--admin-space-5);
-        }
-
-        .days-grid {
-            gap: var(--admin-space-2);
-        }
-
-        .day {
-            min-height: 44px;
-            padding: var(--admin-space-2);
-        }
-
-        .weekday {
-            padding: var(--admin-space-3);
-            font-size: var(--admin-text-sm);
-        }
-
-        .tasks-list {
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        }
-
-        .task-item {
-            flex-direction: row;
-            align-items: flex-start;
-        }
-
-        .task-toggle {
-            align-self: flex-start;
-            white-space: nowrap;
+            flex-direction: column;
+            gap: var(--space-3);
+            text-align: center;
         }
 
         .calendar-controls {
-            flex-direction: row;
-            justify-content: space-between;
-            padding: var(--admin-space-4);
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .date-picker {
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .date-picker .admin-input {
+            width: 100%;
+        }
+
+        .tasks-header {
+            flex-direction: column;
+            gap: var(--space-3);
+            text-align: center;
+        }
+
+        .task-item {
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .task-modal {
+            margin: var(--space-2);
+            max-height: calc(100vh - var(--space-4));
+        }
+
+        .modal-actions {
+            flex-direction: column;
+        }
+
+        .modal-actions button {
+            width: 100%;
         }
     }
 
-    /* Tablet Landscape (768px+) */
     @media (min-width: 768px) {
-        .calendar-content {
-            padding: var(--admin-space-6);
-            gap: var(--admin-space-6);
-        }
-
-        .calendar-wrapper,
-        .tasks-panel {
-            padding: var(--admin-space-6);
-        }
-
         .tasks-list {
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             max-height: 500px;
-        }
-
-        .task-modal {
-            margin: var(--admin-space-6);
-            max-width: 600px;
-        }
-
-        .modal-form {
-            padding: var(--admin-space-6);
-        }
-    }
-
-    /* Desktop Small (1024px+) */
-    @media (min-width: 1024px) {
-        .calendar-content {
-            max-width: var(--admin-content-max-width);
-            margin: 0 auto;
-            padding: var(--admin-space-8);
-        }
-
-        .tasks-list {
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            max-height: 600px;
-        }
-
-        .day {
-            min-height: 48px;
-            font-size: var(--admin-text-lg);
-        }
-
-        .task-modal {
-            max-width: 700px;
-        }
-    }
-
-    /* Desktop Large (1280px+) */
-    @media (min-width: 1280px) {
-        .tasks-list {
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        }
-    }
-
-    /* Ultra Wide Desktop (1536px+) */
-    @media (min-width: 1536px) {
-        .calendar-content {
-            max-width: 1400px;
-        }
-
-        .tasks-list {
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            overflow-y: auto;
         }
     }
 </style>

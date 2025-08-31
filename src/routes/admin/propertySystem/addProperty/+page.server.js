@@ -5,32 +5,26 @@ import { BLOB_READ_WRITE_TOKEN } from '$env/static/private';
 
 export async function load({ locals }) {
     if (!locals.user) throw redirect(302, '/admin/login');
-    return { user: locals.user };
 }
 
 const validatePropertyData = (formData) => {
-    const data = {
-        image: formData.get('image'),
-        location: formData.get('location')?.trim(),
-        type: formData.get('type')?.trim(),
-        price: formData.get('price'),
-        bedrooms: formData.get('bedrooms'),
-        bathrooms: formData.get('bathrooms'),
-        squareFoot: formData.get('square_foot'),
-        address: formData.get('address')?.trim()
-    };
+    const image = formData.get('image');
+    const location = formData.get('location')?.trim();
+    const type = formData.get('type')?.trim();
+    const price = formData.get('price');
 
-    if (!data.image || data.image.size === 0) throw error(400, 'Image is required');
-    if (!data.location || !data.type || !data.price) {
-        throw error(400, 'Location, type, and price are required');
-    }
+    if (!image || image.size === 0) throw error(400, 'Image is required');
+    if (!location || !type || !price) throw error(400, 'Location, type, and price are required');
 
     return {
-        ...data,
-        price: parseFloat(data.price) || 0,
-        bedrooms: parseInt(data.bedrooms) || 0,
-        bathrooms: parseInt(data.bathrooms) || 0,
-        squareFoot: parseInt(data.squareFoot) || 0
+        image,
+        location,
+        type,
+        address: formData.get('address')?.trim(),
+        price: parseFloat(price) || 0,
+        bedrooms: parseInt(formData.get('bedrooms')) || 0,
+        bathrooms: parseInt(formData.get('bathrooms')) || 0,
+        squareFoot: parseInt(formData.get('square_foot')) || 0
     };
 };
 

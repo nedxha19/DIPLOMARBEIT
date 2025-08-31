@@ -1,6 +1,5 @@
 const API_KEY = 'AIzaSyBa44MHgVmA8wzCjcrA2gvn77aEm6kLCGA';
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-
 const SYSTEM_PROMPT = `You are Houseo's professional AI assistant for real estate staff. Provide expert guidance on:
 • Client communications and relationship management
 • Property valuations and market analysis  
@@ -13,10 +12,10 @@ Always give practical, actionable advice with specific steps. Include calculatio
 
 const validateMessage = (input) => {
   if (!input || typeof input !== 'string') throw new Error('Please provide a valid message');
-  const cleaned = input.trim();
-  if (!cleaned) throw new Error('Message cannot be empty');
-  if (cleaned.length > 2000) throw new Error('Message is too long (maximum 2000 characters)');
-  return cleaned;
+  const message = input.trim();
+  if (!message) throw new Error('Message cannot be empty');
+  if (message.length > 2000) throw new Error('Message is too long (maximum 2000 characters)');
+  return message;
 };
 
 const getAIResponse = async (message) => {
@@ -35,7 +34,7 @@ const getAIResponse = async (message) => {
   const reply = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
   
   if (!reply) throw new Error('No response generated');
-  return reply;
+  return reply.length > 2500 ? `${reply.substring(0, 2500)}...` : reply;
 };
 
 export const actions = {
@@ -47,10 +46,7 @@ export const actions = {
       
       return {
         success: true,
-        data: {
-          reply: reply.length > 2500 ? `${reply.substring(0, 2500)}...` : reply,
-          timestamp: new Date().toISOString()
-        }
+        data: { reply, timestamp: new Date().toISOString() }
       };
     } catch (error) {
       console.error('Chat action error:', error.message);

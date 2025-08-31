@@ -7,7 +7,10 @@ export const load = async ({ cookies }) => {
   if (token) {
     const connection = await createConnection();
     try {
-      await connection.execute('UPDATE users SET session_token = NULL, session_expiration = NULL WHERE session_token = ?', [token]);
+      await connection.execute(
+        'UPDATE users SET session_token = NULL, session_expiration = NULL WHERE session_token = ?', 
+        [token]
+      );
     } catch (err) {
       console.error('Logout error:', err);
     } finally {

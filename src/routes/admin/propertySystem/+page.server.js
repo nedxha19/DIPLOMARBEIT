@@ -3,10 +3,11 @@ import { redirect, error } from '@sveltejs/kit';
 
 export async function load({ locals }) {
     if (!locals.user) throw redirect(302, '/admin/login');
+    
     const connection = await createConnection();
     try {
         const [properties] = await connection.execute('SELECT * FROM properties ORDER BY id DESC');
-        return { properties, user: locals.user };
+        return { properties };
     } catch (err) {
         console.error('Database error:', err);
         throw error(500, 'Failed to load properties');
@@ -18,6 +19,7 @@ export async function load({ locals }) {
 export const actions = {
     deleteProperty: async ({ request, locals }) => {
         if (!locals.user) throw redirect(302, '/admin/login');
+        
         const formData = await request.formData();
         const id = formData.get('id');
         if (!id) throw error(400, 'Property ID is required');

@@ -4,9 +4,9 @@ import { validateEmail, validatePassword } from '$lib/utils/authUtils';
 
 export const actions = {
   login: async ({ request, cookies }) => {
-    const data = await request.formData();
-    const email = data.get('email');
-    const password = data.get('password');
+    const formData = await request.formData();
+    const email = formData.get('email');
+    const password = formData.get('password');
 
     if (!validateEmail(email)) return { success: false, message: 'Invalid email format' };
     if (!validatePassword(password)) return { success: false, message: 'Password must be at least 8 characters' };
@@ -14,7 +14,13 @@ export const actions = {
     const result = await login(email, password);
 
     if (result.token) {
-      cookies.set('session', result.token, { path: '/', httpOnly: true, sameSite: 'strict', maxAge: 60 * 60 * 24 * 7 });
+      cookies.set('session', result.token, { 
+        path: '/', 
+        httpOnly: true, 
+        sameSite: 'strict', 
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24 * 7 
+      });
       throw redirect(302, '/admin/propertySystem');
     }
 
