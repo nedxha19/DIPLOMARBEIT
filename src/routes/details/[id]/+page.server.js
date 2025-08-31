@@ -1,0 +1,83 @@
+import { createConnection } from '$lib/db/mysql';
+import { error } from '@sveltejs/kit';
+
+export async function load({ params }) {
+    const { id } = params;
+    const connection = await createConnection();
+    
+    try {
+        // Get property and its details using the comprehensive table structure
+        const [propertyResult] = await connection.execute(`
+            SELECT
+                p.*,
+                pd.title,
+                pd.overview_description,
+                pd.property_type,
+                pd.year_built,
+                pd.square_footage,
+                pd.lot_size,
+                pd.bedrooms,
+                pd.bathrooms,
+                pd.garage,
+                pd.heating,
+                pd.cooling,
+                pd.architecture,
+                pd.roof,
+                pd.exterior,
+                pd.gallery_images,
+                pd.virtual_tour_url,
+                pd.video_tour_url,
+                pd.nearby_schools,
+                pd.nearby_shopping,
+                pd.nearby_companies,
+                pd.nearby_transport,
+                pd.location_description,
+                pd.map_embed_url
+            FROM properties p
+            LEFT JOIN property_details pd ON p.id = pd.property_id
+            WHERE p.id = ?
+        `, [id]);
+        
+        if (propertyResult.length === 0) {
+            throw error(404, 'Property not found');
+        }
+        
+        const property = propertyResult[0];
+        
+        // Parse JSON fields if they exist
+        if (property.gallery_images) {
+            try {
+                property.gallery_images = JSON.parse(property.gallery_images);
+            } catch (e) {
+                property.gallery_images = [];
+            }
+        } else {
+            property.gallery_images = [];
+        }
+
+        // Parse JSON fields
+        const jsonFields = [
+            'gallery_images', 'nearby_schools', 'nearby_shopping',
+            'nearby_companies', 'nearby_transport'
+        ];
+
+        jsonFields.forEach(field => {
+            if (property[field]) {
+                try {
+                    property[field] = JSON.parse(property[field]);
+                } catch (e) {
+                    property[field] = field === 'gallery_images' ? [] : [];
+                }
+            } else {
+                property[field] = field === 'gallery_images' ? [] : [];
+            }
+        });
+        
+        return {
+            property
+        };
+        
+    } finally {
+        connection.release();
+    }
+}

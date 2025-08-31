@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<!-- ✅ lightweight SVG favicon – eliminates previous 404 -->
+	<link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/favicon.svg" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	%sveltekit.head%
+
+	<!-- Font Awesome (icons used in auth pages) -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	
+	<style>
+		:root {
+			--sidebar-bg: #1a2236;
+			--sidebar-active: #0ea5e9;
+			--sidebar-hover: rgba(14, 165, 233, 0.15);
+			--text-primary: #f3f4f6;
+			--text-secondary: #9ca3af;
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		/* Auth-page background */
+		body:has(.login-container),
+		body:has(.register-container) {
+			background-color: var(--sidebar-bg);
+			min-height: 100vh;
+		}
+	</style>
+</head>
+
+<body data-sveltekit-preload-data="hover">
+	<div style="display: contents">%sveltekit.body%</div>
+</body>
+</html>
