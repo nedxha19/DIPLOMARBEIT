@@ -4,26 +4,26 @@
 </script>
 
 <div class="admin-container">
-    <header class="page-header">
-        <div class="header-content">
-            <div class="header-icon">
+    <header class="admin-page-header">
+        <div class="admin-header-content">
+            <div class="admin-header-icon">
                 <i class="fas fa-building"></i>
             </div>
-            <div class="header-text">
+            <div class="admin-header-text">
                 <h1>Property System</h1>
                 <p>Comprehensive property management and portfolio overview</p>
             </div>
         </div>
-        <div class="header-stats">
-            <div class="stat-card">
+        <div class="admin-header-stats">
+            <div class="admin-stat-card">
                 <i class="fas fa-home"></i>
-                <span class="stat-number">{data.properties.length}</span>
-                <span class="stat-label">Properties</span>
+                <span class="admin-stat-number">{data.properties.length}</span>
+                <span class="admin-stat-label">Properties</span>
             </div>
-            <div class="stat-card">
+            <div class="admin-stat-card">
                 <i class="fas fa-chart-line"></i>
-                <span class="stat-number">${(data.properties.reduce((sum, p) => sum + p.price, 0) / 1000000).toFixed(1)}M</span>
-                <span class="stat-label">Portfolio</span>
+                <span class="admin-stat-number">${(data.properties.reduce((sum, p) => sum + p.price, 0) / 1000000).toFixed(1)}M</span>
+                <span class="admin-stat-label">Portfolio</span>
             </div>
         </div>
     </header>
@@ -82,150 +82,51 @@
 </div>
 
 <style>
-    /* Using global .admin-container - removing duplicate styles */
+    /* Header styles now handled by global admin-page-header classes */
 
-    /* Header Section */
-    .page-header {
-        background: var(--admin-gradient-header);
-        border-radius: var(--admin-radius-xl);
-        padding: var(--admin-space-8);
-        color: var(--admin-text-white);
-        margin-bottom: var(--admin-space-8);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: var(--admin-shadow-xl);
-    }
-
-    .header-content {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-6);
-    }
-
-    .header-icon {
-        width: 64px;
-        height: 64px;
-        background: var(--gradient-button);
-        border-radius: var(--radius-xl);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: var(--font-size-2xl);
-        box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-    }
-
-    .header-text h1 {
-        margin: 0 0 var(--spacing-2) 0;
-        font-size: var(--font-size-3xl);
-        font-weight: var(--font-weight-bold);
-        line-height: var(--line-height-tight);
-    }
-
-    .header-text p {
-        margin: 0;
-        opacity: 0.9;
-        font-size: var(--font-size-base);
-        line-height: var(--line-height-normal);
-    }
-
-    .header-stats {
-        display: flex;
-        gap: var(--spacing-4);
-    }
-
-    .stat-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: var(--radius-lg);
-        padding: var(--spacing-4);
-        text-align: center;
-        min-width: 80px;
-    }
-
-    .stat-card i {
-        display: block;
-        font-size: var(--font-size-xl);
-        margin-bottom: var(--spacing-2);
-        color: var(--accent-color);
-    }
-
-    .stat-number {
-        display: block;
-        font-size: var(--font-size-2xl);
-        font-weight: var(--font-weight-bold);
-        line-height: var(--line-height-tight);
-    }
-
-    .stat-label {
-        display: block;
-        font-size: var(--font-size-xs);
-        opacity: 0.8;
-        margin-top: var(--spacing-1);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .admin-container {
-            padding: var(--spacing-4);
-        }
-        
-        .page-header {
-            padding: var(--spacing-6);
-            flex-direction: column;
-            gap: var(--spacing-4);
-            text-align: center;
-        }
-        
-        .header-stats {
-            justify-content: center;
-        }
-    }
-
-
-
-    /* Action Bar */
+    /* Optimized Action Bar */
     .action-bar {
-        background: var(--admin-bg-secondary);
-        border-bottom: 1px solid var(--admin-border-light);
-        padding: var(--admin-space-6);
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-light);
+        padding: var(--space-6);
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: var(--admin-space-4);
+        gap: var(--space-4);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--space-6);
     }
 
-    /* Action Bar Header Colors */
     .action-bar .admin-heading-2 {
-        color: var(--admin-text-primary) !important;
+        color: var(--text-primary) !important;
     }
 
-    /* Properties Grid - Original Structure Preserved */
+    /* Optimized Properties Grid */
     .properties-section {
-        max-width: var(--admin-content-max-width);
+        max-width: var(--container-xl);
         margin: 0 auto;
     }
 
     .property-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: var(--admin-space-6);
+        gap: var(--space-6);
     }
 
     .property-card {
-        background-color: var(--admin-bg-secondary);
-        border-radius: var(--admin-radius-xl);
+        background: var(--bg-secondary);
+        border-radius: var(--radius-xl);
         overflow: hidden;
-        box-shadow: var(--admin-shadow-md);
-        transition: var(--admin-transition-normal);
+        box-shadow: var(--shadow-md);
+        transition: var(--transition-normal);
         height: 450px;
+        border: 1px solid var(--border-light);
     }
 
     .property-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--admin-shadow-xl);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
     }
 
     .image-container {
@@ -238,55 +139,60 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: var(--transition-slow);
+    }
+
+    .property-card:hover .property-image {
+        transform: scale(1.05);
     }
 
     .property-info {
-        padding: var(--admin-space-4);
+        padding: var(--space-4);
         height: 50%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        background-color: #f8f9fa;
+        background: var(--bg-secondary);
     }
 
     .property-name {
-        font-size: var(--admin-text-lg);
-        font-weight: bold;
-        color: var(--admin-accent);
-        margin-bottom: var(--admin-space-2);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-bold);
+        color: var(--accent-color);
+        margin-bottom: var(--space-2);
     }
 
     .property-address {
-        font-size: var(--admin-text-sm);
-        color: var(--admin-text-muted);
-        margin-bottom: var(--admin-space-3);
+        font-size: var(--font-size-sm);
+        color: var(--text-muted);
+        margin-bottom: var(--space-3);
     }
 
     .property-stats {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin: var(--admin-space-3) 0;
+        margin: var(--space-3) 0;
     }
 
     .stat {
         display: flex;
         align-items: center;
-        font-size: var(--admin-text-sm);
-        color: var(--admin-text-secondary);
-        font-weight: 500;
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        font-weight: var(--font-weight-medium);
     }
 
     .stat .icon {
-        font-size: var(--admin-text-lg);
-        margin-right: var(--admin-space-1);
-        color: var(--admin-text-muted);
+        font-size: var(--font-size-lg);
+        margin-right: var(--space-2);
+        color: var(--text-muted);
     }
 
     hr {
         border: none;
-        border-top: 1px solid var(--admin-border-light);
-        margin: var(--admin-space-2) 0;
+        border-top: 1px solid var(--border-light);
+        margin: var(--space-2) 0;
     }
 
     .property-price-type {
@@ -296,44 +202,51 @@
     }
 
     .property-price {
-        font-size: var(--admin-text-base);
-        font-weight: bold;
-        color: var(--admin-accent);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-bold);
+        color: var(--accent-color);
     }
 
     .property-type {
-        font-size: var(--admin-text-sm);
+        font-size: var(--font-size-sm);
         font-style: italic;
-        color: var(--admin-text-muted);
+        color: var(--text-muted);
     }
 
     .delete-button {
-        margin-top: var(--admin-space-3);
-        background-color: var(--admin-error);
-        color: var(--admin-text-white);
+        margin-top: var(--space-3);
+        background: var(--error-color);
+        color: var(--text-white);
         border: none;
-        padding: var(--admin-space-3);
-        border-radius: var(--admin-radius-md);
+        padding: var(--space-3);
+        border-radius: var(--radius-md);
         cursor: pointer;
         width: 100%;
-        font-weight: bold;
-        transition: var(--admin-transition-fast);
+        font-weight: var(--font-weight-semibold);
+        font-family: var(--font-family-sans);
+        transition: var(--transition-fast);
     }
 
     .delete-button:hover {
-        background-color: #c82333;
+        background: var(--error-dark);
+        transform: translateY(-1px);
     }
 
-    /* Mobile-First Responsive Design */
-    @media (max-width: 640px) {
+    /* Optimized Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .admin-container {
+            padding: var(--space-4);
+        }
+
         .action-bar {
             flex-direction: column;
             align-items: stretch;
+            padding: var(--space-4);
         }
 
         .property-grid {
             grid-template-columns: 1fr;
-            gap: var(--admin-space-4);
+            gap: var(--space-4);
         }
 
         .property-card {

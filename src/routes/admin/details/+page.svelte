@@ -653,7 +653,7 @@
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #9ca3af;
+    color: var(--text-muted);
     font-size: 1rem;
   }
 

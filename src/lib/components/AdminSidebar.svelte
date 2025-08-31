@@ -108,7 +108,7 @@ onMount(() => {
   .toggle-btn {
     background: transparent;
     border: none;
-    color: var(--text-secondary);
+    color: var(--text-white);
     cursor: pointer;
     width: 32px;
     height: 32px;
@@ -119,7 +119,7 @@ onMount(() => {
     transition: transform var(--transition-speed), color 0.2s ease;
   }
   .toggle-btn:hover {
-    color: var(--text-primary);
+    color: var(--text-white);
     background: rgba(255, 255, 255, 0.05);
   }
   .sidebar.hide .toggle-btn {
@@ -132,7 +132,7 @@ onMount(() => {
     text-decoration: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     margin-bottom: 12px;
-    color: var(--text-primary);
+    color: var(--text-white);
   }
   .logo-icon {
     font-size: 22px;
@@ -172,17 +172,17 @@ onMount(() => {
     align-items: center;
     height: 100%;
     padding: 0 12px;
-    color: var(--text-secondary);
+    color: var(--text-white);
     text-decoration: none;
     border-radius: var(--border-radius);
     transition: color 0.2s ease, background var(--transition-speed);
   }
   .nav-link:hover {
-    color: var(--text-primary);
+    color: var(--text-white);
     background: rgba(255, 255, 255, 0.03);
   }
   .menu-item.active .nav-link {
-    color: var(--text-primary);
+    color: var(--text-white);
   }
   .nav-link i {
     min-width: 32px;
@@ -191,6 +191,7 @@ onMount(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--text-white);
   }
   .menu-item.active .nav-link i {
     color: var(--sidebar-active);
@@ -222,7 +223,7 @@ onMount(() => {
   }
   .user-info {
     padding: 16px;
-    color: var(--text-secondary);
+    color: var(--text-white);
     font-size: 14px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;

@@ -292,6 +292,15 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
     --admin-space-6: var(--space-6);
     --admin-space-8: var(--space-8);
     --admin-space-10: var(--space-10);
+      --admin-space-12: var(--space-12);
+      --admin-space-16: var(--space-16);
+      
+      /* Content layout */
+      --admin-content-max-width: 1200px;
+      
+      /* Transitions */
+      --admin-transition-normal: var(--transition-normal);
+      --admin-transition-slow: var(--transition-slow);
     --admin-text-xs: var(--font-size-xs);
     --admin-text-sm: var(--font-size-sm);
     --admin-text-base: var(--font-size-base);
@@ -354,6 +363,92 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
     background: var(--gradient-bg);
     min-height: 100vh;
     position: relative;
+  }
+
+  /* === SHARED ADMIN HEADER COMPONENT === */
+  :global(.admin-page-header) {
+    background: var(--gradient-header);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    color: var(--text-white);
+    margin-bottom: var(--space-8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-xl);
+  }
+
+  :global(.admin-header-content) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  :global(.admin-header-icon) {
+    width: var(--space-16);
+    height: var(--space-16);
+    background: var(--gradient-button);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-2xl);
+    color: var(--text-white);
+    box-shadow: var(--shadow-lg);
+  }
+
+  :global(.admin-header-text h1) {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    color: var(--text-white) !important;
+  }
+
+  :global(.admin-header-text p) {
+    margin: 0;
+    color: var(--text-white) !important;
+    opacity: 0.9;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+  }
+
+  :global(.admin-header-stats) {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  :global(.admin-stat-card) {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    text-align: center;
+    min-width: var(--space-20);
+  }
+
+  :global(.admin-stat-card i) {
+    display: block;
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-2);
+    color: var(--accent-color);
+  }
+
+  :global(.admin-stat-number) {
+    display: block;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    color: var(--text-white);
+  }
+
+  :global(.admin-stat-label) {
+    display: block;
+    font-size: var(--font-size-xs);
+    opacity: 0.9;
+    margin-top: var(--space-1);
+    color: var(--text-white);
   }
   
   :global(.admin-container-full) {
@@ -574,8 +669,11 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
     color: var(--warning-color) !important;
   }
 
-  /* === DEFAULT ELEMENT STYLING FOR ADMIN DASHBOARD === */
-  :global(h1, h2, h3, h4, h5, h6) {
+  /* === SCOPED ADMIN CONTENT STYLING === */
+  /* Apply text colors only within admin containers to avoid conflicts */
+  
+  :global(.admin-container h1, .admin-container h2, .admin-container h3, .admin-container h4, .admin-container h5, .admin-container h6),
+  :global(.admin-container-full h1, .admin-container-full h2, .admin-container-full h3, .admin-container-full h4, .admin-container-full h5, .admin-container-full h6) {
     color: var(--text-primary);
     font-family: var(--font-family-sans);
     font-weight: var(--font-weight-semibold);
@@ -583,139 +681,188 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
     margin: 0;
   }
 
-  :global(p) {
+  :global(.admin-container p, .admin-container-full p) {
     color: var(--text-secondary);
     font-family: var(--font-family-sans);
     line-height: var(--line-height-normal);
     margin: 0;
   }
 
-  :global(span) {
+  :global(.admin-container span:not(.sidebar *), .admin-container-full span:not(.sidebar *)) {
     color: inherit;
     font-family: var(--font-family-sans);
   }
 
-  :global(label) {
+  :global(.admin-container label, .admin-container-full label) {
     color: var(--text-label);
     font-family: var(--font-family-sans);
     font-weight: var(--font-weight-medium);
   }
 
   /* === ADMIN DASHBOARD HEADER TEXT OVERRIDES === */
-  /* Force text in admin headers to be white, but exclude sidebar */
+  /* Professional header styling with proper white text on gradient backgrounds */
 
-  /* Target all headers with gradient background */
-  :global(header.page-header),
-  :global(.page-header),
-  :global(.header) {
+  /* Base header containers */
+  :global(.admin-container header.page-header),
+  :global(.admin-container .page-header),
+  :global(.admin-container .header),
+  :global(.admin-container-full .header) {
+    color: var(--text-white) !important;
+    background: var(--gradient-header) !important;
+  }
+
+  /* All text elements in headers should be white */
+  :global(.admin-container header.page-header *:not(.sidebar *)),
+  :global(.admin-container .page-header *:not(.sidebar *)),
+  :global(.admin-container .header *:not(.sidebar *)),
+  :global(.admin-container-full .header *:not(.sidebar *)),
+  :global(.admin-container-full header *:not(.sidebar *)) {
     color: var(--text-white) !important;
   }
 
-  /* Force elements inside headers to be white, but exclude sidebar */
-  :global(header.page-header *),
-  :global(.page-header *),
-  :global(.header *) {
+  /* Specific override for chat app headers */
+  :global(.chat-app .header),
+  :global(.chat-app header) {
     color: var(--text-white) !important;
   }
 
-  /* Specific text elements */
-  :global(header.page-header h1, header.page-header h2, header.page-header h3, header.page-header h4, header.page-header h5, header.page-header h6),
-  :global(.page-header h1, .page-header h2, .page-header h3, .page-header h4, .page-header h5, .page-header h6),
-  :global(.header h1, .header h2, .header h3, .header h4, .header h5, .header h6) {
+  :global(.chat-app .header *),
+  :global(.chat-app header *) {
     color: var(--text-white) !important;
   }
 
-  :global(header.page-header p, header.page-header span, header.page-header div),
-  :global(.page-header p, .page-header span, .page-header div),
-  :global(.header p, .header span, .header div) {
-    color: var(--text-white) !important;
-    opacity: 0.9;
-  }
-
-  /* Text content inside header elements */
-  :global(header.page-header .header-text),
-  :global(.page-header .header-text),
-  :global(.header .header-text) {
+  /* Header content sections */
+  :global(.admin-container .header-content),
+  :global(.admin-container .header-left),
+  :global(.admin-container .header-info),
+  :global(.admin-container .header-text),
+  :global(.admin-container-full .header-content),
+  :global(.admin-container-full .header-left),
+  :global(.admin-container-full .header-info),
+  :global(.admin-container-full .header-text) {
     color: var(--text-white) !important;
   }
 
-  :global(header.page-header .header-text *),
-  :global(.page-header .header-text *),
-  :global(.header .header-text *) {
+  /* Force all header children to inherit white color */
+  :global(.admin-container .page-header),
+  :global(.admin-container-full .header) {
     color: var(--text-white) !important;
   }
 
-  /* Stat cards in headers */
-  :global(header.page-header .stat-card, .page-header .stat-card, .header .stat-card) {
+  :global(.admin-container .page-header .header-content *),
+  :global(.admin-container .page-header .header-text *),
+  :global(.admin-container-full .header .header-info *),
+  :global(.admin-container-full .header .header-left *) {
+    color: var(--text-white) !important;
+  }
+
+  /* Headings in headers - CRITICAL OVERRIDE */
+  :global(.admin-container .page-header h1, .admin-container .page-header h2, .admin-container .page-header h3),
+  :global(.admin-container .header h1, .admin-container .header h2, .admin-container .header h3),
+  :global(.admin-container-full .header h1, .admin-container-full .header h2, .admin-container-full .header h3),
+  :global(.admin-container header h1, .admin-container header h2, .admin-container header h3),
+  :global(.admin-container-full header h1, .admin-container-full header h2, .admin-container-full header h3) {
+    color: var(--text-white) !important;
+    font-weight: var(--font-weight-bold) !important;
+  }
+
+  /* Property System specific override */
+  :global(.admin-container .page-header .header-text h1),
+  :global(.admin-container .page-header .header-text p),
+  :global(.admin-container-full .header .header-info h1),
+  :global(.admin-container-full .header .header-info p) {
+    color: var(--text-white) !important;
+  }
+
+  /* Paragraphs and spans in headers */
+  :global(.admin-container .page-header p, .admin-container .page-header span),
+  :global(.admin-container .header p, .admin-container .header span),
+  :global(.admin-container-full .header p, .admin-container-full .header span) {
+    color: var(--text-white) !important;
+    opacity: 0.9 !important;
+  }
+
+  /* Status indicators */
+  :global(.admin-container .status, .admin-container-full .status) {
+    color: var(--text-white) !important;
+    opacity: 0.85 !important;
+  }
+
+  /* Stat cards styling */
+  :global(.admin-container .stat-card, .admin-container-full .stat-card) {
     background: rgba(255, 255, 255, 0.1) !important;
     backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  }
-
-  :global(header.page-header .stat-card *, .page-header .stat-card *, .header .stat-card *) {
     color: var(--text-white) !important;
   }
 
-  :global(header.page-header .stat-card i, .page-header .stat-card i, .header .stat-card i) {
+  :global(.admin-container .stat-card *, .admin-container-full .stat-card *) {
+    color: var(--text-white) !important;
+  }
+
+  :global(.admin-container .stat-card i, .admin-container-full .stat-card i) {
     color: var(--accent-color) !important;
   }
 
-  /* === SIDEBAR TEXT OVERRIDES - PRESERVE SIDEBAR COLORS === */
-  /* Allow sidebar to use its own proper contrast colors on dark background */
-
-  /* Reset sidebar to use its own defined colors */
-  :global(.sidebar) {
-    --text-primary: #f3f4f6 !important;   /* Light gray/white */
-    --text-secondary: #9ca3af !important; /* Medium gray */
-    --sidebar-active: #0ea5e9 !important; /* Blue accent */
+  /* === ADMIN CONTENT AREA STYLING === */
+  /* Fix content visibility and ensure proper contrast */
+  
+  :global(.admin-container),
+  :global(.admin-container-full) {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    color: var(--text-primary);
   }
 
-  /* Ensure all sidebar text uses proper contrast */
-  :global(.sidebar *) {
+  /* Action bars and content sections */
+  :global(.admin-container .action-bar),
+  :global(.admin-container-full .action-bar) {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  :global(.admin-container .action-bar h2),
+  :global(.admin-container .action-bar .admin-heading-2),
+  :global(.admin-container-full .action-bar h2),
+  :global(.admin-container-full .action-bar .admin-heading-2) {
+    color: var(--text-primary) !important;
+    font-weight: var(--font-weight-bold) !important;
+  }
+
+  /* Properties and content sections */
+  :global(.admin-container .properties-section),
+  :global(.admin-container .admin-section),
+  :global(.admin-container-full .properties-section),
+  :global(.admin-container-full .admin-section) {
+    background: transparent;
+    color: var(--text-primary);
+  }
+
+  /* Property cards and content cards */
+  :global(.admin-container .property-card),
+  :global(.admin-container .content-card),
+  :global(.admin-container-full .property-card),
+  :global(.admin-container-full .content-card) {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-light);
+  }
+
+  /* Ensure all text in content areas is visible */
+  :global(.admin-container .property-card *:not(.sidebar *)),
+  :global(.admin-container .content-card *:not(.sidebar *)),
+  :global(.admin-container-full .property-card *:not(.sidebar *)),
+  :global(.admin-container-full .content-card *:not(.sidebar *)) {
     color: inherit !important;
   }
 
-  /* Logo and navigation text */
-  :global(.sidebar .logo) {
-    color: var(--text-primary) !important;
-  }
-
-  :global(.sidebar .logo-text) {
-    color: var(--text-primary) !important;
-  }
-
-  :global(.sidebar .nav-link) {
-    color: var(--text-secondary) !important;
-  }
-
-  :global(.sidebar .nav-link:hover) {
-    color: var(--text-primary) !important;
-  }
-
-  :global(.sidebar .menu-item.active .nav-link) {
-    color: var(--text-primary) !important;
-  }
-
-  /* Icons */
-  :global(.sidebar .logo-icon) {
-    color: var(--sidebar-active) !important;
-  }
-
-  :global(.sidebar .nav-link i) {
-    color: var(--text-secondary) !important;
-  }
-
-  :global(.sidebar .menu-item.active .nav-link i) {
-    color: var(--sidebar-active) !important;
-  }
-
-  /* Toggle button */
-  :global(.sidebar .toggle-btn) {
-    color: var(--text-secondary) !important;
-  }
-
-  :global(.sidebar .toggle-btn:hover) {
-    color: var(--text-primary) !important;
+  /* === SIDEBAR TEXT OVERRIDES - CLEAN APPROACH === */
+  /* Ensure sidebar components use their own scoped variables */
+  
+  :global(.sidebar) {
+    /* Sidebar manages its own colors via scoped CSS variables */
+    color: #f3f4f6; /* Fallback for proper contrast on dark background */
   }
 
   /* === AUTHENTICATION PAGES OVERRIDES === */
@@ -909,6 +1056,41 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
   :global(.chatbot-focus-visible:focus-visible) {
     outline: 2px solid var(--admin-accent);
     outline-offset: 2px;
+  }
+
+  /* === ADMIN LAYOUT STRUCTURE === */
+  .admin-layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg-primary);
+  }
+
+  .content {
+    flex: 1;
+    margin-left: 260px;
+    background: var(--bg-primary);
+    min-height: 100vh;
+    padding: var(--space-6);
+    transition: margin-left var(--transition-normal);
+  }
+
+  .content.no-padding {
+    padding: 0;
+  }
+
+  .admin-layout.sidebar-hidden .content {
+    margin-left: 72px;
+  }
+
+  @media (max-width: 768px) {
+    .content {
+      margin-left: 0;
+      padding: var(--space-4);
+    }
+    
+    .admin-layout.sidebar-hidden .content {
+      margin-left: 0;
+    }
   }
 
   /* Dark mode support for future expansion */

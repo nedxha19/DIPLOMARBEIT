@@ -119,13 +119,13 @@
 </script>
 
 <div class="admin-container-full chat-app">
-  <!-- Header -->
-  <header class="header">
-    <div class="header-left">
-      <div class="ai-avatar">
+  <!-- Modern Header -->
+  <header class="admin-page-header">
+    <div class="admin-header-content">
+      <div class="admin-header-icon">
         <i class="fas fa-robot"></i>
       </div>
-      <div class="header-info">
+      <div class="admin-header-text">
         <h1>Houseo AI Assistant</h1>
         <p class="status">
           {#if loading}
@@ -136,15 +136,19 @@
         </p>
       </div>
     </div>
-    <div class="header-actions">
-      <button type="button" on:click={toggleQuickActions} class="action-btn" title="Quick Actions">
-        <i class="fas fa-lightbulb"></i>
-        <span>Templates</span>
-      </button>
-      <button type="button" on:click={clearChat} class="action-btn danger" title="Clear Chat">
-        <i class="fas fa-trash-alt"></i>
-        <span>Clear</span>
-      </button>
+    <div class="admin-header-stats">
+      <div class="admin-stat-card">
+        <button type="button" on:click={toggleQuickActions} class="action-btn" title="Quick Actions">
+          <i class="fas fa-lightbulb"></i>
+          <span>Templates</span>
+        </button>
+      </div>
+      <div class="admin-stat-card">
+        <button type="button" on:click={clearChat} class="action-btn danger" title="Clear Chat">
+          <i class="fas fa-trash-alt"></i>
+          <span>Clear</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -283,44 +287,66 @@
   }
 
   /* === HEADER SECTION === */
-  .header {
-    background: var(--gradient-header);
+  /* Header styles now handled by global admin-page-header classes */
+  
+  /* Custom status styling for chatbot */
+  .status {
+    color: var(--text-white) !important;
+    opacity: 0.9;
+    font-size: var(--font-size-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .status i.online {
+    color: var(--success-color);
+    animation: pulse 2s infinite;
+  }
+
+  .status i.pulse {
+    color: var(--warning-color);
+    animation: thinking 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  @keyframes thinking {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  /* Action buttons styled to fit in stat cards */
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: transparent;
+    border: none;
     color: var(--text-white);
-    padding: var(--space-5) var(--space-8);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: var(--shadow-lg);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    flex-shrink: 0;
-  }
-
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-  }
-
-  .ai-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-xl);
-    background: var(--gradient-secondary);
-    display: flex;
-    align-items: center;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    width: 100%;
     justify-content: center;
-    font-size: var(--font-size-xl);
-    color: var(--text-white);
-    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
   }
 
-  .header-info h1 {
-    margin: 0;
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--line-height-tight);
-    font-family: var(--font-family-sans);
+  .action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
   }
+
+  .action-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+  }
+
+
 
   .status {
     margin: 0.25rem 0 0 0;
@@ -385,7 +411,8 @@
     background: rgba(255, 255, 255, 0.05);
     padding: 0.75rem 2rem;
     font-size: 0.85rem;
-    color: #9ca3af;
+    color: var(--text-white);
+    opacity: 0.7;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -486,7 +513,8 @@
   .close-btn {
     background: none;
     border: none;
-    color: #9ca3af;
+    color: var(--text-white);
+    opacity: 0.7;
     cursor: pointer;
     width: 32px;
     height: 32px;
@@ -587,7 +615,8 @@
   }
 
   .template-arrow {
-    color: #9ca3af;
+    color: var(--text-white);
+    opacity: 0.6;
     font-size: 0.875rem;
     transition: all 0.3s ease;
   }
@@ -699,10 +728,15 @@
   }
 
   .message.user .message-text {
-    background: linear-gradient(135deg, #0ea5e9 0%, #1a2236 100%);
-    color: white;
+    background: var(--gradient-button);
+    color: var(--text-white) !important;
     border-radius: 16px 16px 6px 16px;
-    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Ensure all text in user messages is white */
+  .message.user .message-text * {
+    color: var(--text-white) !important;
   }
 
   .message.bot .message-text {
@@ -856,7 +890,7 @@
   }
 
   .input-group textarea::placeholder {
-    color: #9ca3af;
+    color: var(--text-placeholder);
     font-weight: 400;
   }
 
@@ -915,17 +949,23 @@
     justify-content: space-between;
     margin-top: 1rem;
     font-size: 0.8rem;
-    color: #9ca3af;
+    color: var(--text-muted);
     font-weight: 500;
   }
 
   /* Mobile */
   @media (max-width: 768px) {
-    .header {
+    .admin-page-header {
       flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
-      padding: 1rem;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-6);
+      text-align: center;
+    }
+
+    .admin-header-stats {
+      flex-direction: row;
+      gap: var(--space-3);
     }
 
     .clear-btn {
@@ -972,4 +1012,4 @@
       text-align: center;
     }
   }
-</style>e asn
+</style>
