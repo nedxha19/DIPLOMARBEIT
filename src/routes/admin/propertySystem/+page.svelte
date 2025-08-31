@@ -3,50 +3,30 @@
     let { data } = $props();
 </script>
 
-<section class="admin-container">
-    <div class="dashboard-header admin-section">
+<div class="admin-container">
+    <header class="page-header">
         <div class="header-content">
-            <h1 class="admin-heading-1">Property Management</h1>
-            <p class="admin-text-body">Manage your real estate portfolio</p>
-        </div>
-        <div class="metrics-grid">
-            <div class="metric-card admin-card">
-                <div class="metric-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                </div>
-                <div class="metric-info">
-                    <span class="metric-value">{data.properties?.length || 0}</span>
-                    <span class="metric-label">Total Properties</span>
-                </div>
+            <div class="header-icon">
+                <i class="fas fa-building"></i>
             </div>
-            
-            <div class="metric-card admin-card">
-                <div class="metric-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                    </svg>
-                </div>
-                <div class="metric-info">
-                    <span class="metric-value">${(data.properties?.reduce((sum, p) => sum + p.price, 0) || 0).toLocaleString()}</span>
-                    <span class="metric-label">Total Value</span>
-                </div>
-            </div>
-            
-            <div class="metric-card admin-card">
-                <div class="metric-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                    </svg>
-                </div>
-                <div class="metric-info">
-                    <span class="metric-value">${data.properties?.length ? Math.round(data.properties.reduce((sum, p) => sum + p.price, 0) / data.properties.length).toLocaleString() : '0'}</span>
-                    <span class="metric-label">Avg. Value</span>
-                </div>
+            <div class="header-text">
+                <h1>Property System</h1>
+                <p>Comprehensive property management and portfolio overview</p>
             </div>
         </div>
-    </div>
+        <div class="header-stats">
+            <div class="stat-card">
+                <i class="fas fa-home"></i>
+                <span class="stat-number">{data.properties.length}</span>
+                <span class="stat-label">Properties</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-chart-line"></i>
+                <span class="stat-number">${(data.properties.reduce((sum, p) => sum + p.price, 0) / 1000000).toFixed(1)}M</span>
+                <span class="stat-label">Portfolio</span>
+            </div>
+        </div>
+    </header>
 
     <!-- Action Bar -->
     <div class="action-bar">
@@ -99,79 +79,111 @@
             {/each}
         </div>
     </div>
-</section>
+</div>
 
 <style>
-    /* Dashboard Header */
-    .dashboard-header {
-        background: var(--admin-gradient-header);
-        color: var(--admin-text-white);
-    }
+    /* Using global .admin-container - removing duplicate styles */
 
-    /* Force Header Text to White */
-    .dashboard-header .admin-heading-1,
-    .dashboard-header .admin-text-body {
-        color: var(--admin-text-white) !important;
+    /* Header Section */
+    .page-header {
+        background: var(--admin-gradient-header);
+        border-radius: var(--admin-radius-xl);
+        padding: var(--admin-space-8);
+        color: var(--admin-text-white);
+        margin-bottom: var(--admin-space-8);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: var(--admin-shadow-xl);
     }
 
     .header-content {
-        text-align: center;
-        margin-bottom: var(--admin-space-8);
-    }
-
-    /* Metrics Grid */
-    .metrics-grid {
-        max-width: var(--admin-content-max-width);
-        margin: 0 auto;
-    }
-
-    .metric-card {
-        padding: var(--admin-space-6);
-        background: rgba(255, 255, 255, 0.1) !important;
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
         display: flex;
         align-items: center;
-        gap: var(--admin-space-4);
-        transition: var(--admin-transition-normal);
+        gap: var(--spacing-6);
     }
 
-    .metric-card:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-        transform: translateY(-2px);
-    }
-
-    .metric-icon {
-        width: 48px;
-        height: 48px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: var(--admin-radius-lg);
+    .header-icon {
+        width: 64px;
+        height: 64px;
+        background: var(--gradient-button);
+        border-radius: var(--radius-xl);
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: var(--font-size-2xl);
+        box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
     }
 
-    .metric-icon svg {
-        width: 24px;
-        height: 24px;
-        stroke-width: 2;
+    .header-text h1 {
+        margin: 0 0 var(--spacing-2) 0;
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-bold);
+        line-height: var(--line-height-tight);
     }
 
-    .metric-info {
+    .header-text p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: var(--font-size-base);
+        line-height: var(--line-height-normal);
+    }
+
+    .header-stats {
         display: flex;
-        flex-direction: column;
+        gap: var(--spacing-4);
     }
 
-    .metric-value {
-        font-size: var(--admin-text-2xl);
-        font-weight: 700;
-        margin-bottom: var(--admin-space-2);
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-4);
+        text-align: center;
+        min-width: 80px;
     }
 
-    .metric-label {
-        font-size: var(--admin-text-sm);
+    .stat-card i {
+        display: block;
+        font-size: var(--font-size-xl);
+        margin-bottom: var(--spacing-2);
+        color: var(--accent-color);
+    }
+
+    .stat-number {
+        display: block;
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        line-height: var(--line-height-tight);
+    }
+
+    .stat-label {
+        display: block;
+        font-size: var(--font-size-xs);
         opacity: 0.8;
+        margin-top: var(--spacing-1);
     }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .admin-container {
+            padding: var(--spacing-4);
+        }
+        
+        .page-header {
+            padding: var(--spacing-6);
+            flex-direction: column;
+            gap: var(--spacing-4);
+            text-align: center;
+        }
+        
+        .header-stats {
+            justify-content: center;
+        }
+    }
+
+
 
     /* Action Bar */
     .action-bar {

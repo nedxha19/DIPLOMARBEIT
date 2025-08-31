@@ -1,112 +1,228 @@
 <script>
     import { enhance } from '$app/forms';
     let { form, data } = $props();
+    
+    // Form state management
+    let currentStep = $state(1);
+    let formData = $state({
+        image: null,
+        location: '',
+        type: '',
+        price: '',
+        bedrooms: '',
+        bathrooms: '',
+        square_foot: '',
+        address: ''
+    });
+    
+    // Update step based on form completion
+    $effect(() => {
+        if (formData.image) {
+            currentStep = Math.max(currentStep, 2);
+        }
+        if (formData.location && formData.type && formData.price && formData.bedrooms && formData.bathrooms && formData.square_foot) {
+            currentStep = Math.max(currentStep, 3);
+        }
+    });
+    
+    function handleFileChange(event) {
+        formData.image = event.target.files[0];
+    }
+    
+    function handleSubmit() {
+        return async ({ result, update }) => {
+            if (result.type === 'success') {
+                // Reset form
+                formData = {
+                    image: null,
+                    location: '',
+                    type: '',
+                    price: '',
+                    bedrooms: '',
+                    bathrooms: '',
+                    square_foot: '',
+                    address: ''
+                };
+                currentStep = 1;
+            }
+            await update();
+        };
+    }
 </script>
 
 <section class="admin-container">
-    <header class="form-header admin-section">
+    <!-- Modern Header Section -->
+    <header class="page-header">
         <div class="header-content">
-            <h1 class="admin-heading-1">Add New Property</h1>
-            <p class="admin-text-body">Enter property details to add to your portfolio</p>
+            <div class="header-icon">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            <div class="header-text">
+                <h1>Add New Property</h1>
+                <p>Expand your real estate portfolio with detailed property information</p>
+            </div>
+        </div>
+        <div class="header-stats">
+            <div class="stat-card">
+                <i class="fas fa-upload"></i>
+                <span class="stat-label">Quick Add</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-shield-alt"></i>
+                <span class="stat-label">Secure</span>
+            </div>
         </div>
     </header>
 
+    <!-- Progress Steps -->
+    <div class="progress-section">
+        <div class="progress-steps">
+            <div class="step" class:active={currentStep >= 1} class:completed={currentStep > 1}>
+                <div class="step-number">1</div>
+                <span>Upload Image</span>
+            </div>
+            <div class="step" class:active={currentStep >= 2} class:completed={currentStep > 2}>
+                <div class="step-number">2</div>
+                <span>Property Details</span>
+            </div>
+            <div class="step" class:active={currentStep >= 3}>
+                <div class="step-number">3</div>
+                <span>Submit & Save</span>
+            </div>
+        </div>
+    </div>
+
     <div class="form-content-wrapper">
-        <form action="?/upload" method="POST" use:enhance enctype="multipart/form-data" class="property-form">
+        <form action="?/upload" method="POST" use:enhance={handleSubmit} enctype="multipart/form-data" class="property-form">
         
-            <div class="form-section admin-card">
-                <div class="section-header">
-                    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    <h2 class="admin-heading-2">Property Image</h2>
+            <!-- Property Image Section -->
+            <div class="form-section">
+                <h3><i class="fas fa-camera"></i> Property Image</h3>
+                <div class="file-upload">
+                    <label for="image" class="upload-area" class:has-file={formData.image}>
+                        <input 
+                            type="file" 
+                            id="image" 
+                            name="image" 
+                            required 
+                            accept="image/*"
+                            onchange={handleFileChange}
+                        />
+                        {#if formData.image}
+                            <div class="upload-success">
+                                <i class="fas fa-check-circle"></i>
+                                <span>{formData.image.name}</span>
                 </div>
-                <div class="file-input-wrapper">
-                    <label class="file-input-label">
-                        <input type="file" name="image" required class="file-input" />
-                        <div class="file-input-display">
-                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                            </svg>
-                            <span class="upload-text">Choose property image</span>
-                            <span class="upload-subtext">Upload a high-quality image (JPG, PNG)</span>
+                        {:else}
+                            <div class="upload-placeholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Choose property image</span>
+                                <small>JPG, PNG (max 5MB)</small>
                         </div>
+                        {/if}
                     </label>
                 </div>
             </div>
 
-            <div class="form-section admin-card">
-                <div class="section-header">
-                    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                    <h2 class="admin-heading-2">Property Details</h2>
-                </div>
-
-                <div class="admin-grid admin-grid-responsive">
+            <!-- Property Details Section -->
+            <div class="form-section">
+                <h3><i class="fas fa-info-circle"></i> Property Details</h3>
+                <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">
-                            <span class="label-text">Location</span>
-                            <input type="text" name="location" required class="admin-input" placeholder="e.g., Manhattan, New York" />
-            </label>
+                        <label for="location">Location *</label>
+                        <input 
+                            type="text" 
+                            id="location" 
+                            name="location" 
+                            bind:value={formData.location}
+                            required 
+                            placeholder="e.g., Manhattan, New York" 
+                        />
         </div>
 
                     <div class="form-group">
-                        <label class="form-label">
-                            <span class="label-text">Property Type</span>
-                            <input type="text" name="type" required class="admin-input" placeholder="e.g., Apartment, House, Condo" />
-            </label>
+                        <label for="type">Property Type *</label>
+                        <select id="type" name="type" bind:value={formData.type} required>
+                            <option value="">Select Property Type</option>
+                            <option value="Apartment">Apartment</option>
+                            <option value="House">House</option>
+                            <option value="Condo">Condominium</option>
+                            <option value="Townhouse">Townhouse</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Studio">Studio</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">
-                            <span class="label-text">Price (USD)</span>
-                            <div class="input-with-icon">
-                                <span class="input-icon">$</span>
-                                <input type="number" step="0.01" name="price" required class="admin-input price-input" placeholder="0.00" />
-                            </div>
-            </label>
+                        <label for="price">Price (USD) *</label>
+                        <input 
+                            type="number" 
+                            id="price" 
+                            name="price" 
+                            bind:value={formData.price}
+                            step="0.01" 
+                            required 
+                            placeholder="0.00" 
+                        />
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">
-                            <span class="label-text">Bedrooms</span>
-                            <input type="number" name="bedrooms" required class="admin-input" placeholder="0" min="0" />
-            </label>
+                        <label for="bedrooms">Bedrooms *</label>
+                        <input 
+                            type="number" 
+                            id="bedrooms" 
+                            name="bedrooms" 
+                            bind:value={formData.bedrooms}
+                            required 
+                            min="0" 
+                            placeholder="0" 
+                        />
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">
-                            <span class="label-text">Bathrooms</span>
-                            <input type="number" name="bathrooms" required class="admin-input" placeholder="0" min="0" />
-            </label>
+                        <label for="bathrooms">Bathrooms *</label>
+                        <input 
+                            type="number" 
+                            id="bathrooms" 
+                            name="bathrooms" 
+                            bind:value={formData.bathrooms}
+                            required 
+                            min="0" 
+                            step="0.5" 
+                            placeholder="0" 
+                        />
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">
-                            <span class="label-text">Square Footage</span>
-                            <div class="input-with-suffix">
-                                <input type="number" name="square_foot" required class="admin-input" placeholder="0" min="0" />
-                                <span class="input-suffix">sqft</span>
-                            </div>
-            </label>
+                        <label for="square_foot">Square Footage *</label>
+                        <input 
+                            type="number" 
+                            id="square_foot" 
+                            name="square_foot" 
+                            bind:value={formData.square_foot}
+                            required 
+                            min="0" 
+                            placeholder="0" 
+                        />
         </div>
 
                     <div class="form-group full-width">
-                        <label class="form-label">
-                            <span class="label-text">Address</span>
-                            <input type="text" name="address" class="admin-input" placeholder="Full street address (optional)" />
-                        </label>
+                        <label for="address">Full Address</label>
+                        <input 
+                            type="text" 
+                            id="address" 
+                            name="address" 
+                            bind:value={formData.address}
+                            placeholder="Full street address (optional)" 
+                        />
                     </div>
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="admin-button-primary">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    Add Property
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Property to Portfolio
                 </button>
             </div>
         </form>
@@ -128,274 +244,362 @@
 </section>
 
 <style>
-    /* Form Header */
-    .form-header {
-        background: var(--admin-gradient-header);
-        color: var(--admin-text-white);
-    }
+/* Using global .admin-container - removing duplicate styles */
 
-    /* Force Header Text to White */
-    .form-header .admin-heading-1,
-    .form-header .admin-text-body {
-        color: var(--admin-text-white) !important;
+/* Header */
+.page-header {
+  background: var(--admin-gradient-header);
+  border-radius: var(--admin-radius-lg);
+  padding: var(--admin-space-8);
+  color: var(--admin-text-white);
+  margin-bottom: var(--admin-space-8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
     }
 
     .header-content {
-        text-align: center;
-        max-width: 800px;
-        margin: 0 auto;
-    }
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
 
-    /* Form Content */
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--accent-color);
+  border-radius: var(--radius-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-2xl);
+}
+
+.header-text h1 {
+  margin: 0 0 var(--spacing-1) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.header-text p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: var(--font-size-sm);
+}
+
+.header-stats {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-base);
+  padding: var(--spacing-3);
+        text-align: center;
+  min-width: 60px;
+}
+
+.stat-card i {
+  display: block;
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-1);
+  color: var(--accent-color);
+}
+
+.stat-label {
+  font-size: var(--font-size-xs);
+  opacity: 0.8;
+}
+
+/* Progress Steps */
+.progress-section {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
+  box-shadow: var(--shadow-base);
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  opacity: 0.4;
+  transition: var(--transition-base);
+}
+
+.step.active,
+.step.completed {
+  opacity: 1;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--border-light);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  transition: var(--transition-base);
+}
+
+.step.active .step-number {
+  background: var(--accent-color);
+  color: var(--text-white);
+}
+
+.step.completed .step-number {
+  background: var(--success-color);
+  color: var(--text-white);
+}
+
+.step span {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-muted);
+}
+
+.step.active span,
+.step.completed span {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Form */
     .form-content-wrapper {
-        max-width: 800px;
+  max-width: 1000px;
         margin: 0 auto;
-        padding: 0;
     }
 
     .property-form {
-        padding: var(--admin-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
     }
 
 .form-section {
-        margin-bottom: var(--admin-space-8);
-        padding: var(--admin-space-6);
-        background: var(--admin-bg-accent);
-    }
-
-    .section-header {
-        display: flex;
-        align-items: center;
-        gap: var(--admin-space-3);
-        margin-bottom: var(--admin-space-6);
-        padding-bottom: var(--admin-space-4);
-        border-bottom: 2px solid var(--admin-border-light);
-    }
-
-    /* Section Header Text Colors */
-    .section-header .admin-heading-2 {
-        color: var(--admin-text-primary) !important;
-    }
-
-    .section-icon {
-        width: 24px;
-        height: 24px;
-        color: var(--admin-accent);
-        stroke-width: 2;
-    }
-
-    .file-input-wrapper {
-        margin-top: var(--admin-space-4);
-    }
-
-    .file-input-label {
-        display: block;
-        cursor: pointer;
-    }
-
-    .file-input {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-    .file-input-display {
+.form-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a2236;
+        display: flex;
+        align-items: center;
+  gap: 0.5rem;
+}
+
+.form-section h3 i {
+  color: #0ea5e9;
+}
+
+/* File Upload */
+.file-upload {
+  width: 100%;
+}
+
+.upload-area {
+  display: block;
+  width: 100%;
+  padding: 2rem;
+  border: 2px dashed #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.upload-area:hover {
+  border-color: #0ea5e9;
+  background: #f0f9ff;
+}
+
+.upload-area.has-file {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.upload-area input {
+  display: none;
+}
+
+.upload-placeholder {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        padding: var(--admin-space-8);
-        border: 2px dashed var(--admin-border-medium);
-        border-radius: var(--admin-radius-lg);
-        background: var(--admin-bg-secondary);
-        transition: var(--admin-transition-normal);
-        text-align: center;
-    }
-
-    .file-input-display:hover {
-        border-color: var(--admin-accent);
-    }
-
-    .upload-icon {
-        width: 48px;
-        height: 48px;
-        color: var(--admin-accent);
-        stroke-width: 1.5;
-        margin-bottom: var(--admin-space-4);
-    }
-
-    .upload-text {
-        font-size: var(--admin-text-lg);
-        font-weight: 600;
-        color: var(--admin-text-primary);
-        margin-bottom: var(--admin-space-1);
+  gap: 0.5rem;
 }
 
-    .upload-subtext {
-        font-size: var(--admin-text-sm);
-        color: var(--admin-text-muted);
+.upload-placeholder i {
+  font-size: 2rem;
+  color: #0ea5e9;
+}
+
+.upload-placeholder span {
+  font-weight: 500;
+  color: #1a2236;
+}
+
+.upload-placeholder small {
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.upload-success {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #10b981;
+  font-weight: 500;
+}
+
+.upload-success i {
+  font-size: 1.25rem;
+}
+
+/* Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
     }
 
     .form-group {
     display: flex;
     flex-direction: column;
+  gap: 0.5rem;
     }
 
     .form-group.full-width {
         grid-column: 1 / -1;
 }
 
-    .form-label {
-        display: flex;
-        flex-direction: column;
-        gap: var(--admin-space-2);
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
 }
 
-    .label-text {
-        font-size: var(--admin-text-base);
-        font-weight: 600;
-        color: var(--admin-text-label);
-    }
+.form-group input,
+.form-group select {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: border-color 0.3s ease;
+}
 
-    .input-with-icon {
-        position: relative;
-        display: flex;
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+/* Submit Button */
+.form-actions {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #0ea5e9 0%, #1a2236 100%);
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: inline-flex;
         align-items: center;
-    }
+  gap: 0.5rem;
+}
 
-    .input-icon {
-        position: absolute;
-        left: var(--admin-space-4);
-        font-size: var(--admin-text-lg);
-        font-weight: 600;
-        color: var(--admin-text-muted);
-        z-index: 1;
-    }
+.submit-btn:hover {
+  transform: translateY(-1px);
+}
 
-    .price-input {
-        padding-left: calc(var(--admin-space-4) + 20px) !important;
-    }
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-    .input-with-suffix {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-
-    .input-suffix {
-        position: absolute;
-        right: var(--admin-space-4);
-        font-size: var(--admin-text-base);
-        font-weight: 500;
-        color: var(--admin-text-muted);
-        pointer-events: none;
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: center;
-        margin-top: var(--admin-space-8);
-        padding: var(--admin-space-8) var(--admin-space-6);
-        background: var(--admin-bg-accent);
-        border-top: 1px solid var(--admin-border-light);
-        border-radius: 0 0 var(--admin-radius-xl) var(--admin-radius-xl);
-    }
-
-    /* Enhanced Submit Button */
-    .form-actions .admin-button-primary {
-        padding: var(--admin-space-4) var(--admin-space-8);
-        font-size: var(--admin-text-lg);
-        font-weight: 700;
-        min-width: 200px;
-        justify-content: center;
-        box-shadow: var(--admin-shadow-lg);
-        border-radius: var(--admin-radius-lg);
-        transition: all 0.3s ease;
-    }
-
-    .form-actions .admin-button-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--admin-shadow-xl);
-    }
-
-    .form-actions .admin-button-primary svg {
-        width: 20px;
-        height: 20px;
-        stroke-width: 2.5;
-    }
-
+/* Success Message */
     .success-message {
-        margin: var(--admin-space-6) var(--admin-space-8) 0;
-        padding: var(--admin-space-5);
-        background: var(--admin-success-light);
-        border: 1px solid var(--admin-success);
-        border-radius: var(--admin-radius-lg);
-        animation: slideIn 0.5s ease-out;
-    }
-
-    /* Success Message Text Colors */
-    .success-message .admin-heading-2 {
-        color: var(--admin-success) !important;
-        margin-bottom: var(--admin-space-2);
-    }
-
-    .success-message .admin-text-body {
-        color: var(--admin-text-primary) !important;
+  background: #f0fdf4;
+  border: 1px solid #16a34a;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
     }
 
     .success-content {
         display: flex;
-        align-items: flex-start;
-        gap: var(--admin-space-3);
+  align-items: center;
+  gap: 0.75rem;
     }
 
     .success-icon {
-        width: 24px;
-        height: 24px;
-        color: var(--admin-success);
-        stroke-width: 2;
-        flex-shrink: 0;
-        margin-top: 2px;
+  color: #16a34a;
+  font-size: 1.25rem;
 }
 
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+.success-message h3 {
+  margin: 0 0 0.25rem 0;
+  color: #166534;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
-    /* Mobile-First Responsive Design */
-    @media (max-width: 640px) {
-        .form-content-wrapper {
-            margin: 0 var(--admin-space-2);
-        }
+.success-message p {
+  margin: 0;
+  color: #15803d;
+  font-size: 0.875rem;
+}
 
-        .property-form {
-            padding: var(--admin-space-6);
-        }
-
-        .form-section {
-            padding: var(--admin-space-5);
-            margin-bottom: var(--admin-space-6);
-        }
-
-        .file-input-display {
-            padding: var(--admin-space-6);
-        }
-
-        .upload-icon {
-            width: 40px;
-            height: 40px;
-        }
-
-        .success-message {
-            margin: var(--admin-space-5) var(--admin-space-6) 0;
-            padding: var(--admin-space-4);
+/* Mobile */
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .progress-steps {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
         }
     }
 </style>

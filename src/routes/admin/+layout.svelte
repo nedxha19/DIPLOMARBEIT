@@ -20,11 +20,7 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
 {/if}
 
 <style>
-  /* ========================================
-     GLOBAL ADMIN DESIGN SYSTEM
-     Professional, Clean, Maintainable
-  ======================================== */
-
+  
   /* CSS Reset */
   :global(*) {
     margin: 0;
@@ -35,109 +31,286 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
   :global(html, body) {
     margin: 0;
     padding: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--font-family-sans);
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
   }
 
-  /* Global CSS Variables - Professional Design System */
+  /* === COMPREHENSIVE GLOBAL CSS DESIGN SYSTEM === */
+  /* Professional-grade CSS custom properties for maintainable admin dashboard */
   :global(:root) {
-    /* === PROFESSIONAL ADMIN COLORS === */
-    --admin-primary: #1a2236;           /* Dark navy - professional */
-    --admin-primary-light: #2a3441;     /* Lighter navy */
-    --admin-primary-dark: #141b28;      /* Darker navy */
-    --admin-secondary: #6b7280;
-    --admin-accent: #0ea5e9;            /* Bright blue accent */
     
-    /* Original Auth Colors (same as admin now) */
-    --auth-sidebar-bg: #1a2236;
-    --auth-sidebar-active: #0ea5e9;
-    --auth-sidebar-hover: rgba(14, 165, 233, 0.15);
-    --auth-text-primary: #f3f4f6;
-    --auth-text-secondary: #9ca3af;
+    /* === CORE COLOR PALETTE === */
+    --primary-color: #1a2236;
+    --primary-light: #2d3748;
+    --primary-dark: #0f1419;
+    --accent-color: #0ea5e9;
+    --accent-light: #38bdf8;
+    --accent-dark: #0284c7;
     
-    /* Backgrounds */
-    --admin-bg-primary: #f8fafc;
-    --admin-bg-secondary: #ffffff;
-    --admin-bg-dark: #1a2236;
-    --admin-bg-accent: rgba(14, 165, 233, 0.05);
+    /* === SEMANTIC COLORS === */
+    --success-color: #10b981;
+    --success-light: #d1fae5;
+    --success-dark: #065f46;
+    --warning-color: #f59e0b;
+    --warning-light: #fef3c7;
+    --warning-dark: #92400e;
+    --error-color: #ef4444;
+    --error-light: #fee2e2;
+    --error-dark: #dc2626;
+    --info-color: #3b82f6;
+    --info-light: #dbeafe;
+    --info-dark: #1d4ed8;
     
-    /* Professional Gradients */
-    --admin-gradient-primary: linear-gradient(135deg, var(--admin-primary-dark) 0%, var(--admin-primary) 100%);
-    --admin-gradient-header: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-light) 100%);
-    --admin-gradient-button: linear-gradient(135deg, var(--admin-accent) 0%, #0284c7 100%);
+    /* === NEUTRAL COLORS === */
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
     
-    /* Professional Text Colors */
-    --admin-text-primary: #0f172a;      /* Rich dark slate - premium readability */
-    --admin-text-secondary: #475569;    /* Professional medium gray */
-    --admin-text-muted: #64748b;        /* Lighter muted text */
-    --admin-text-white: #ffffff;
-    --admin-text-label: #1e293b;        /* Strong labels */
-    --admin-text-placeholder: #94a3b8;  /* Professional placeholder */
+    /* === BACKGROUND COLORS === */
+    --bg-primary: var(--gray-50);
+    --bg-secondary: #ffffff;
+    --bg-accent: var(--gray-100);
+    --bg-dark: var(--primary-color);
+    --bg-overlay: rgba(0, 0, 0, 0.5);
     
-    /* Borders */
-    --admin-border-light: #e5e7eb;
-    --admin-border-medium: #d1d5db;
-    --admin-border-dark: #374151;
+    /* === TEXT COLORS === */
+    --text-primary: var(--gray-900);
+    --text-secondary: var(--gray-600);
+    --text-muted: var(--gray-500);
+    --text-disabled: var(--gray-400);
+    --text-white: #ffffff;
+    --text-inverse: var(--gray-100);
+    --text-placeholder: var(--gray-400);
+    --text-label: var(--gray-700);
     
-    /* Status Colors */
-    --admin-success: #10b981;
-    --admin-success-light: #d1fae5;
-    --admin-error: #ef4444;
-    --admin-error-light: #fee2e2;
-    --admin-warning: #f59e0b;
-    --admin-warning-light: #fef3c7;
+    /* === BORDER COLORS === */
+    --border-light: var(--gray-200);
+    --border-medium: var(--gray-300);
+    --border-dark: var(--gray-400);
+    --border-focus: var(--accent-color);
     
-    /* === SHADOWS === */
-    --admin-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --admin-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --admin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --admin-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    /* === GRADIENT SYSTEM === */
+    --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    --gradient-secondary: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+    --gradient-bg: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+    --gradient-header: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    --gradient-button: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+    --gradient-card: linear-gradient(135deg, #ffffff 0%, var(--gray-50) 100%);
     
-    /* === SPACING (Mobile-First) === */
-    --admin-space-1: 0.25rem;
-    --admin-space-2: 0.5rem;
-    --admin-space-3: 0.75rem;
-    --admin-space-4: 1rem;
-    --admin-space-5: 1.25rem;
-    --admin-space-6: 1.5rem;
-    --admin-space-8: 2rem;
-    --admin-space-10: 2.5rem;
-    --admin-space-12: 3rem;
-    --admin-space-16: 4rem;
-    --admin-space-20: 5rem;
+    /* === TYPOGRAPHY SYSTEM === */
+    --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-family-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Monaco, Consolas, monospace;
     
-    /* === TYPOGRAPHY (Mobile-First) === */
-    --admin-text-xs: 0.75rem;
-    --admin-text-sm: 0.875rem;
-    --admin-text-base: 1rem;
-    --admin-text-lg: 1.125rem;
-    --admin-text-xl: 1.25rem;
-    --admin-text-2xl: 1.5rem;
-    --admin-text-3xl: 1.875rem;
-    --admin-text-4xl: 2.25rem;
+    /* Font Sizes */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+    --font-size-5xl: 3rem;
+    --font-size-6xl: 3.75rem;
     
-    /* === BORDER RADIUS === */
-    --admin-radius-sm: 0.25rem;
-    --admin-radius-md: 0.5rem;
-    --admin-radius-lg: 0.75rem;
-    --admin-radius-xl: 1rem;
-    --admin-radius-2xl: 1.5rem;
+    /* Font Weights */
+    --font-weight-thin: 100;
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    --font-weight-black: 900;
     
-    /* === TRANSITIONS === */
-    --admin-transition-fast: 150ms ease-in-out;
-    --admin-transition-normal: 250ms ease-in-out;
-    --admin-transition-slow: 350ms ease-in-out;
+    /* Line Heights */
+    --line-height-tight: 1.25;
+    --line-height-snug: 1.375;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.625;
+    --line-height-loose: 2;
     
-    /* === BREAKPOINTS (Mobile-First) === */
-    --admin-bp-sm: 640px;
-    --admin-bp-md: 768px;
-    --admin-bp-lg: 1024px;
-    --admin-bp-xl: 1280px;
+    /* === SPACING SYSTEM === */
+    --space-0: 0;
+    --space-px: 1px;
+    --space-0-5: 0.125rem;
+    --space-1: 0.25rem;
+    --space-1-5: 0.375rem;
+    --space-2: 0.5rem;
+    --space-2-5: 0.625rem;
+    --space-3: 0.75rem;
+    --space-3-5: 0.875rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-7: 1.75rem;
+    --space-8: 2rem;
+    --space-9: 2.25rem;
+    --space-10: 2.5rem;
+    --space-11: 2.75rem;
+    --space-12: 3rem;
+    --space-14: 3.5rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+    --space-28: 7rem;
+    --space-32: 8rem;
     
-    /* === LAYOUT === */
-    --admin-sidebar-width: 260px;
-    --admin-sidebar-collapsed: 72px;
-    --admin-header-height: 64px;
-    --admin-content-max-width: 1400px;
+    /* === SIZING SYSTEM === */
+    --container-sm: 640px;
+    --container-md: 768px;
+    --container-lg: 1024px;
+    --container-xl: 1280px;
+    --container-2xl: 1536px;
+    --container-max-width: 1400px;
+    --content-max-width: 1200px;
+    
+    /* === BORDER RADIUS SYSTEM === */
+    --radius-none: 0;
+    --radius-sm: 0.125rem;
+    --radius-base: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --radius-3xl: 1.5rem;
+    --radius-full: 9999px;
+    
+    /* === SHADOW SYSTEM === */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+    --shadow-outline: 0 0 0 3px rgba(14, 165, 233, 0.5);
+    --shadow-none: 0 0 #0000;
+    
+    /* === TRANSITION SYSTEM === */
+    --timing-linear: linear;
+    --timing-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --timing-ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --timing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --timing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --timing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    --duration-75: 75ms;
+    --duration-100: 100ms;
+    --duration-150: 150ms;
+    --duration-200: 200ms;
+    --duration-300: 300ms;
+    --duration-500: 500ms;
+    --duration-700: 700ms;
+    --duration-1000: 1000ms;
+    
+    --transition-fast: all var(--duration-150) var(--timing-ease);
+    --transition-normal: all var(--duration-300) var(--timing-ease);
+    --transition-slow: all var(--duration-500) var(--timing-ease);
+    
+    /* === Z-INDEX SYSTEM === */
+    --z-index-dropdown: 1000;
+    --z-index-sticky: 1020;
+    --z-index-fixed: 1030;
+    --z-index-modal-backdrop: 1040;
+    --z-index-modal: 1050;
+    --z-index-popover: 1060;
+    --z-index-tooltip: 1070;
+    --z-index-toast: 1080;
+    
+    /* === COMPONENT-SPECIFIC VARIABLES === */
+    --sidebar-width: 280px;
+    --sidebar-width-collapsed: 80px;
+    --sidebar-bg: var(--primary-color);
+    --sidebar-active: var(--accent-color);
+    --sidebar-hover: rgba(14, 165, 233, 0.15);
+    
+    --input-height: 2.5rem;
+    --input-height-sm: 2rem;
+    --input-height-lg: 3rem;
+    --button-height: 2.5rem;
+    --button-height-sm: 2rem;
+    --button-height-lg: 3rem;
+    
+    --card-padding: var(--space-6);
+    --card-border-radius: var(--radius-xl);
+    --card-shadow: var(--shadow-md);
+    
+    /* === BREAKPOINTS === */
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
+    
+    /* === LEGACY COMPATIBILITY === */
+    --admin-bg-primary: var(--gradient-bg);
+    --admin-bg-secondary: var(--bg-secondary);
+    --admin-bg-accent: var(--bg-accent);
+    --admin-bg-dark: var(--bg-dark);
+    --admin-gradient-header: var(--gradient-header);
+    --admin-gradient-button: var(--gradient-button);
+    --admin-text-white: var(--text-white);
+    --admin-text-primary: var(--text-primary);
+    --admin-text-secondary: var(--text-secondary);
+    --admin-text-muted: var(--text-muted);
+    --admin-text-label: var(--text-label);
+    --admin-text-placeholder: var(--text-placeholder);
+    --admin-accent: var(--accent-color);
+    --admin-primary: var(--primary-color);
+    --admin-secondary: var(--text-secondary);
+    --admin-success: var(--success-color);
+    --admin-success-light: var(--success-light);
+    --admin-error: var(--error-color);
+    --admin-error-light: var(--error-light);
+    --admin-warning: var(--warning-color);
+    --admin-border-light: var(--border-light);
+    --admin-border-medium: var(--border-medium);
+    --admin-border-dark: var(--border-dark);
+    --admin-shadow-sm: var(--shadow-sm);
+    --admin-shadow-md: var(--shadow-md);
+    --admin-shadow-lg: var(--shadow-lg);
+    --admin-shadow-xl: var(--shadow-xl);
+    --admin-radius-sm: var(--radius-sm);
+    --admin-radius-md: var(--radius-md);
+    --admin-radius-lg: var(--radius-lg);
+    --admin-radius-xl: var(--radius-xl);
+    --admin-space-1: var(--space-1);
+    --admin-space-2: var(--space-2);
+    --admin-space-3: var(--space-3);
+    --admin-space-4: var(--space-4);
+    --admin-space-5: var(--space-5);
+    --admin-space-6: var(--space-6);
+    --admin-space-8: var(--space-8);
+    --admin-space-10: var(--space-10);
+    --admin-text-xs: var(--font-size-xs);
+    --admin-text-sm: var(--font-size-sm);
+    --admin-text-base: var(--font-size-base);
+    --admin-text-lg: var(--font-size-lg);
+    --admin-text-xl: var(--font-size-xl);
+    --admin-text-2xl: var(--font-size-2xl);
+    --admin-text-3xl: var(--font-size-3xl);
+    --admin-text-4xl: var(--font-size-4xl);
+    --admin-font-weight-normal: var(--font-weight-normal);
+    --admin-font-weight-medium: var(--font-weight-medium);
+    --admin-font-weight-semibold: var(--font-weight-semibold);
+    --admin-font-weight-bold: var(--font-weight-bold);
+    --admin-line-height-tight: var(--line-height-tight);
+    --admin-line-height-normal: var(--line-height-normal);
+    --admin-transition-fast: var(--transition-fast);
+    --admin-transition-normal: var(--transition-normal);
+    --admin-content-max-width: var(--content-max-width);
+    --admin-sidebar-width: var(--sidebar-width);
+    --admin-sidebar-collapsed: var(--sidebar-width-collapsed);
   }
 
   /* === PROFESSIONAL MOBILE-FIRST RESPONSIVE DESIGN === */
@@ -173,154 +346,443 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
     padding: 0;
   }
 
-  /* === GLOBAL UTILITY CLASSES === */
+  /* === OPTIMIZED GLOBAL UTILITY CLASSES === */
   :global(.admin-container) {
-    margin: 0;
-    padding: 0;
-    background: var(--admin-bg-primary);
+    padding: var(--space-8);
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    background: var(--gradient-bg);
     min-height: 100vh;
     position: relative;
   }
+  
+  :global(.admin-container-full) {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--gradient-bg);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  :global(.admin-container-auth) {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background: var(--sidebar-bg);
+    padding: var(--space-4);
+    font-family: var(--font-family-sans);
+  }
 
   :global(.admin-card) {
-    background: var(--admin-bg-secondary);
-    border-radius: var(--admin-radius-xl);
-    box-shadow: var(--admin-shadow-md);
-    border: 1px solid var(--admin-border-light);
+    background: var(--bg-secondary);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-light);
     overflow: hidden;
+    padding: var(--card-padding);
   }
 
   :global(.admin-button-primary) {
     display: inline-flex;
     align-items: center;
-    gap: var(--admin-space-2);
-    background: var(--admin-gradient-button);
-    color: var(--admin-text-white);
+    gap: var(--space-2);
+    background: var(--gradient-button);
+    color: var(--text-white);
     border: none;
-    padding: var(--admin-space-3) var(--admin-space-6);
-    border-radius: var(--admin-radius-lg);
-    font-weight: 600;
-    font-size: var(--admin-text-base);
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family-sans);
     cursor: pointer;
-    transition: var(--admin-transition-normal);
+    transition: var(--transition-normal);
     text-decoration: none;
-    box-shadow: var(--admin-shadow-md);
+    box-shadow: var(--shadow-md);
+    line-height: 1;
   }
 
   :global(.admin-button-primary:hover) {
-    background: linear-gradient(135deg, #0284c7 0%, var(--admin-accent) 100%);
-    box-shadow: var(--admin-shadow-lg);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-lg);
     transform: translateY(-1px);
+  }
+
+  :global(.admin-button-primary:focus) {
+    outline: none;
+    box-shadow: var(--shadow-outline);
+  }
+
+  :global(.admin-button-primary:disabled) {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
   }
 
   :global(.admin-input) {
     width: 100%;
-    padding: var(--admin-space-3) var(--admin-space-4);
-    border: 2px solid var(--admin-border-light);
-    border-radius: var(--admin-radius-md);
-    font-size: var(--admin-text-base);
-    background: var(--admin-bg-secondary);
-    color: var(--admin-text-primary);
-    transition: var(--admin-transition-fast);
+    height: var(--input-height);
+    padding: 0 var(--space-4);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family-sans);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: var(--transition-fast);
+    line-height: 1.5;
   }
 
   :global(.admin-input:focus) {
     outline: none;
-    border-color: var(--admin-accent);
-    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    border-color: var(--border-focus);
+    box-shadow: var(--shadow-outline);
   }
 
   :global(.admin-input::placeholder) {
-    color: var(--admin-text-placeholder);
+    color: var(--text-placeholder);
     opacity: 1;
   }
 
-  /* === PROFESSIONAL RESPONSIVE GRID SYSTEM === */
-  :global(.admin-grid) {
-    display: grid;
-    gap: var(--admin-space-6);
+  :global(.admin-input:disabled) {
+    background: var(--bg-accent);
+    color: var(--text-disabled);
+    cursor: not-allowed;
   }
 
-  /* Mobile: 1 column */
+  /* === OPTIMIZED RESPONSIVE GRID SYSTEM === */
+  :global(.admin-grid) {
+    display: grid;
+    gap: var(--space-6);
+  }
+
   :global(.admin-grid-responsive) {
     grid-template-columns: 1fr;
   }
 
-  /* Tablet: 2 columns */
   @media (min-width: 640px) {
     :global(.admin-grid-responsive) {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* Desktop: 3 columns */
   @media (min-width: 1024px) {
     :global(.admin-grid-responsive) {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  /* === PROFESSIONAL TYPOGRAPHY SYSTEM === */
+  /* === OPTIMIZED TYPOGRAPHY SYSTEM === */
   :global(.admin-heading-1) {
-    font-size: var(--admin-text-2xl);
-    font-weight: 700;
-    color: var(--admin-text-primary);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    font-family: var(--font-family-sans);
     margin: 0;
-    line-height: 1.2;
+    line-height: var(--line-height-tight);
     letter-spacing: -0.025em;
   }
 
   @media (min-width: 768px) {
     :global(.admin-heading-1) {
-      font-size: var(--admin-text-4xl);
+      font-size: var(--font-size-4xl);
     }
   }
 
   :global(.admin-heading-2) {
-    font-size: var(--admin-text-xl);
-    font-weight: 600;
-    color: var(--admin-text-primary);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    font-family: var(--font-family-sans);
     margin: 0;
-    line-height: 1.3;
+    line-height: var(--line-height-snug);
     letter-spacing: -0.015em;
   }
 
   @media (min-width: 768px) {
     :global(.admin-heading-2) {
-      font-size: var(--admin-text-2xl);
+      font-size: var(--font-size-2xl);
     }
   }
 
   :global(.admin-text-body) {
-    font-size: var(--admin-text-base);
-    color: var(--admin-text-secondary);
-    line-height: 1.5;
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    font-family: var(--font-family-sans);
+    line-height: var(--line-height-normal);
     margin: 0;
   }
 
   :global(.admin-text-label) {
-    font-size: var(--admin-text-base);
-    font-weight: 600;
-    color: var(--admin-text-label);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-label);
+    font-family: var(--font-family-sans);
     margin: 0;
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
   }
 
-  /* === MOBILE-OPTIMIZED SPACING === */
+  /* === OPTIMIZED SPACING UTILITIES === */
   :global(.admin-section) {
-    padding: var(--admin-space-6) var(--admin-space-4);
+    padding: var(--space-6) var(--space-4);
   }
 
   @media (min-width: 768px) {
     :global(.admin-section) {
-      padding: var(--admin-space-8) var(--admin-space-6);
+      padding: var(--space-8) var(--space-6);
     }
   }
 
   @media (min-width: 1024px) {
     :global(.admin-section) {
-      padding: var(--admin-space-10) var(--admin-space-8);
+      padding: var(--space-10) var(--space-8);
     }
+  }
+
+  /* === ESSENTIAL TEXT COLOR UTILITIES === */
+  :global(.text-primary) {
+    color: var(--text-primary) !important;
+  }
+
+  :global(.text-secondary) {
+    color: var(--text-secondary) !important;
+  }
+
+  :global(.text-muted) {
+    color: var(--text-muted) !important;
+  }
+
+  :global(.text-white) {
+    color: var(--text-white) !important;
+  }
+
+  :global(.text-label) {
+    color: var(--text-label) !important;
+  }
+
+  :global(.text-success) {
+    color: var(--success-color) !important;
+  }
+
+  :global(.text-error) {
+    color: var(--error-color) !important;
+  }
+
+  :global(.text-warning) {
+    color: var(--warning-color) !important;
+  }
+
+  /* === DEFAULT ELEMENT STYLING FOR ADMIN DASHBOARD === */
+  :global(h1, h2, h3, h4, h5, h6) {
+    color: var(--text-primary);
+    font-family: var(--font-family-sans);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+    margin: 0;
+  }
+
+  :global(p) {
+    color: var(--text-secondary);
+    font-family: var(--font-family-sans);
+    line-height: var(--line-height-normal);
+    margin: 0;
+  }
+
+  :global(span) {
+    color: inherit;
+    font-family: var(--font-family-sans);
+  }
+
+  :global(label) {
+    color: var(--text-label);
+    font-family: var(--font-family-sans);
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* === ADMIN DASHBOARD HEADER TEXT OVERRIDES === */
+  /* Force text in admin headers to be white, but exclude sidebar */
+
+  /* Target all headers with gradient background */
+  :global(header.page-header),
+  :global(.page-header),
+  :global(.header) {
+    color: var(--text-white) !important;
+  }
+
+  /* Force elements inside headers to be white, but exclude sidebar */
+  :global(header.page-header *),
+  :global(.page-header *),
+  :global(.header *) {
+    color: var(--text-white) !important;
+  }
+
+  /* Specific text elements */
+  :global(header.page-header h1, header.page-header h2, header.page-header h3, header.page-header h4, header.page-header h5, header.page-header h6),
+  :global(.page-header h1, .page-header h2, .page-header h3, .page-header h4, .page-header h5, .page-header h6),
+  :global(.header h1, .header h2, .header h3, .header h4, .header h5, .header h6) {
+    color: var(--text-white) !important;
+  }
+
+  :global(header.page-header p, header.page-header span, header.page-header div),
+  :global(.page-header p, .page-header span, .page-header div),
+  :global(.header p, .header span, .header div) {
+    color: var(--text-white) !important;
+    opacity: 0.9;
+  }
+
+  /* Text content inside header elements */
+  :global(header.page-header .header-text),
+  :global(.page-header .header-text),
+  :global(.header .header-text) {
+    color: var(--text-white) !important;
+  }
+
+  :global(header.page-header .header-text *),
+  :global(.page-header .header-text *),
+  :global(.header .header-text *) {
+    color: var(--text-white) !important;
+  }
+
+  /* Stat cards in headers */
+  :global(header.page-header .stat-card, .page-header .stat-card, .header .stat-card) {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  :global(header.page-header .stat-card *, .page-header .stat-card *, .header .stat-card *) {
+    color: var(--text-white) !important;
+  }
+
+  :global(header.page-header .stat-card i, .page-header .stat-card i, .header .stat-card i) {
+    color: var(--accent-color) !important;
+  }
+
+  /* === SIDEBAR TEXT OVERRIDES - PRESERVE SIDEBAR COLORS === */
+  /* Allow sidebar to use its own proper contrast colors on dark background */
+
+  /* Reset sidebar to use its own defined colors */
+  :global(.sidebar) {
+    --text-primary: #f3f4f6 !important;   /* Light gray/white */
+    --text-secondary: #9ca3af !important; /* Medium gray */
+    --sidebar-active: #0ea5e9 !important; /* Blue accent */
+  }
+
+  /* Ensure all sidebar text uses proper contrast */
+  :global(.sidebar *) {
+    color: inherit !important;
+  }
+
+  /* Logo and navigation text */
+  :global(.sidebar .logo) {
+    color: var(--text-primary) !important;
+  }
+
+  :global(.sidebar .logo-text) {
+    color: var(--text-primary) !important;
+  }
+
+  :global(.sidebar .nav-link) {
+    color: var(--text-secondary) !important;
+  }
+
+  :global(.sidebar .nav-link:hover) {
+    color: var(--text-primary) !important;
+  }
+
+  :global(.sidebar .menu-item.active .nav-link) {
+    color: var(--text-primary) !important;
+  }
+
+  /* Icons */
+  :global(.sidebar .logo-icon) {
+    color: var(--sidebar-active) !important;
+  }
+
+  :global(.sidebar .nav-link i) {
+    color: var(--text-secondary) !important;
+  }
+
+  :global(.sidebar .menu-item.active .nav-link i) {
+    color: var(--sidebar-active) !important;
+  }
+
+  /* Toggle button */
+  :global(.sidebar .toggle-btn) {
+    color: var(--text-secondary) !important;
+  }
+
+  :global(.sidebar .toggle-btn:hover) {
+    color: var(--text-primary) !important;
+  }
+
+  /* === AUTHENTICATION PAGES OVERRIDES === */
+  /* Professional, clean system for auth pages on dark background */
+  
+  /* 1. Container base - ensure proper text inheritance */
+  :global(.admin-container-auth) {
+    color: var(--text-white) !important;
+  }
+  
+  /* 2. Headers should be bright white for visibility */
+  :global(.admin-container-auth h1, .admin-container-auth h2, .admin-container-auth h3, 
+          .admin-container-auth h4, .admin-container-auth h5, .admin-container-auth h6) {
+    color: var(--text-white) !important;
+    font-weight: var(--font-weight-semibold);
+  }
+  
+  /* 3. Body text should be visible with slight transparency */
+  :global(.admin-container-auth p, .admin-container-auth span) {
+    color: var(--text-white) !important;
+    opacity: 0.9;
+  }
+  
+  /* 4. Form labels should be white with good visibility */
+  :global(.admin-container-auth label) {
+    color: var(--text-white) !important;
+    opacity: 0.85;
+  }
+  
+  /* 5. Logo icons should be accent blue for brand consistency */
+  :global(.admin-container-auth .logo-icon,
+          .admin-container-auth .fa-user-cog,
+          .admin-container-auth .fa-user-plus) {
+    color: var(--accent-color) !important;
+  }
+  
+  /* 6. Form input icons should be visible white */
+  :global(.admin-container-auth .input-group i) {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  
+  /* 7. Input fields with proper contrast */
+  :global(.admin-container-auth input) {
+    color: var(--text-white) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  :global(.admin-container-auth input::placeholder) {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  
+  :global(.admin-container-auth input:focus) {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3) !important;
+  }
+  
+  /* 8. Buttons should have white text */
+  :global(.admin-container-auth button) {
+    color: var(--text-white) !important;
+  }
+  
+  /* 9. Error messages with proper visibility */
+  :global(.admin-container-auth .error-message) {
+    color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
   }
 
   /* === GLOBAL CHATBOT STYLES === */
@@ -390,11 +852,36 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
     }
   }
 
-  /* Mobile-specific global styles */
+  /* === OPTIMIZED RESPONSIVE DESIGN === */
   @media (max-width: 640px) {
     :global(.chatbot-floating-global) {
-      bottom: var(--admin-space-4);
-      right: var(--admin-space-4);
+      bottom: var(--space-4);
+      right: var(--space-4);
+    }
+    
+    :global(.admin-container) {
+      padding: var(--space-4);
+    }
+    
+    :global(.admin-container-auth) {
+      padding: var(--space-3);
+    }
+    
+    /* Ensure headers remain white on mobile */
+    :global(.page-header h1, .page-header p) {
+      color: var(--text-white) !important;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    :global(.admin-container) {
+      padding: var(--space-6);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    :global(.admin-container) {
+      padding: var(--space-8);
     }
   }
 

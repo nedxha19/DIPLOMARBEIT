@@ -15,6 +15,6 @@ export const load = async ({ cookies }) => {
     }
   }
 
-  cookies.set('session', '', { path: '/', maxAge: -1 });
+  cookies.delete('session', { path: '/' });
   throw redirect(302, '/admin/login');
 };

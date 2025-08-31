@@ -1,16 +1,23 @@
 import { redirect } from '@sveltejs/kit';
 
 export async function load({ locals, url }) {
-  const path = url.pathname;
-  const isLogin = path === '/admin/login';
-  const isRegister = path === '/admin/register';
+  const { pathname } = url;
+  const isAuthPage = pathname === '/admin/login' || pathname === '/admin/register';
 
-  if (isLogin || isRegister) {
-    if (isRegister && (!locals.user || locals.user.email !== 'nedxha19@htl-shkoder.com')) throw redirect(302, '/admin/login');
-    if (locals.user && isLogin) throw redirect(302, '/admin/propertySystem');
+  // Handle auth pages
+  if (isAuthPage) {
+    // Register requires super admin access
+    if (pathname === '/admin/register' && (!locals.user || locals.user.email !== 'nedxha19@htl-shkoder.com')) {
+      throw redirect(302, '/admin/login');
+    }
+    // Redirect authenticated users away from login
+    if (pathname === '/admin/login' && locals.user) {
+      throw redirect(302, '/admin/propertySystem');
+    }
     return {};
   }
 
+  // All other admin pages require authentication
   if (!locals.user) throw redirect(302, '/admin/login');
   return { user: locals.user };
 }

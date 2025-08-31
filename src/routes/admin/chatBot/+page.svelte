@@ -118,7 +118,7 @@
   }
 </script>
 
-<div class="chat-app">
+<div class="admin-container-full chat-app">
   <!-- Header -->
   <header class="header">
     <div class="header-left">
@@ -162,7 +162,7 @@
     <div class="quick-actions">
       <div class="quick-actions-header">
         <h3><i class="fas fa-magic"></i> Quick Templates</h3>
-        <button type="button" on:click={toggleQuickActions} class="close-btn">
+        <button type="button" on:click={toggleQuickActions} class="close-btn" aria-label="Close quick actions panel">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -216,7 +216,7 @@
                 <time>{new Date(msg.timestamp).toLocaleTimeString()}</time>
                 {#if msg.role === 'bot'}
                   <div class="message-actions">
-                    <button type="button" on:click={() => copyMessage(msg.text)} class="msg-action" title="Copy message">
+                    <button type="button" on:click={() => copyMessage(msg.text)} class="msg-action" aria-label="Copy message">
                       <i class="fas fa-copy"></i>
                     </button>
                   </div>
@@ -233,20 +233,7 @@
         </div>
       {/each}
       
-      {#if messages.length === 1}
-        <div class="welcome-guide">
-          <div class="guide-content">
-            <i class="fas fa-lightbulb"></i>
-            <p>Try asking me about:</p>
-            <ul>
-              <li>Property valuations and market analysis</li>
-              <li>Legal documents and contracts</li>
-              <li>Marketing content for listings</li>
-              <li>Client communication templates</li>
-            </ul>
-          </div>
-        </div>
-      {/if}
+
     </div>
   </div>
 
@@ -285,52 +272,54 @@
 </div>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  /* === OPTIMIZED CHAT APPLICATION STYLES === */
   
   .chat-app {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-    font-family: 'Inter', sans-serif;
+    background: var(--gradient-bg);
+    font-family: var(--font-family-sans);
   }
 
-  /* Header */
+  /* === HEADER SECTION === */
   .header {
-    background: linear-gradient(135deg, #1a2236 0%, #2a3441 100%);
-    color: #f3f4f6;
-    padding: 1.25rem 2rem;
+    background: var(--gradient-header);
+    color: var(--text-white);
+    padding: var(--space-5) var(--space-8);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 12px rgba(26, 34, 54, 0.3);
+    box-shadow: var(--shadow-lg);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
   }
 
   .header-left {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--space-4);
   }
 
   .ai-avatar {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #0ea5e9 0%, #1a2236 100%);
+    border-radius: var(--radius-xl);
+    background: var(--gradient-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
-    color: white;
+    font-size: var(--font-size-xl);
+    color: var(--text-white);
     box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
   }
 
   .header-info h1 {
     margin: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1.2;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    font-family: var(--font-family-sans);
   }
 
   .status {
@@ -777,48 +766,7 @@
     font-style: italic;
   }
 
-  /* Welcome Guide */
-  .welcome-guide {
-    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
-    border: 1px solid rgba(14, 165, 233, 0.2);
-    border-radius: 16px;
-    padding: 2rem;
-    margin: 2rem 0;
-    text-align: center;
-  }
 
-  .guide-content i {
-    font-size: 2rem;
-    color: #0ea5e9;
-    margin-bottom: 1rem;
-  }
-
-  .guide-content p {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1a2236;
-    margin: 0 0 1rem 0;
-  }
-
-  .guide-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 0.75rem;
-    text-align: left;
-    max-width: 400px;
-    margin: 0 auto;
-  }
-
-  .guide-content li {
-    padding: 0.75rem;
-    background: rgba(14, 165, 233, 0.05);
-    border-radius: 8px;
-    border-left: 3px solid #0ea5e9;
-    color: #374151;
-    font-size: 0.9rem;
-  }
 
   .message.error {
     background: #fef2f2;
@@ -1024,4 +972,4 @@
       text-align: center;
     }
   }
-</style>
+</style>e asn
