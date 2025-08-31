@@ -162,14 +162,28 @@
 		<div class="calendar-wrapper admin-card">
 			<!-- Month Navigation -->
 			<div class="month-header">
-				<div class="nav-btn" on:click={prevMonth}>
+				<div 
+					class="nav-btn" 
+					role="button" 
+					tabindex="0"
+					on:click={prevMonth}
+					on:keydown={(e) => e.key === 'Enter' || e.key === ' ' ? prevMonth() : null}
+					aria-label="Previous month"
+				>
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
 					</svg>
 					Previous
 				</div>
 				<h2 class="admin-heading-2">{months[month]} {year}</h2>
-				<div class="nav-btn" on:click={nextMonth}>
+				<div 
+					class="nav-btn" 
+					role="button" 
+					tabindex="0"
+					on:click={nextMonth}
+					on:keydown={(e) => e.key === 'Enter' || e.key === ' ' ? nextMonth() : null}
+					aria-label="Next month"
+				>
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 18 6-6-6-6"/>
 					</svg>
@@ -262,7 +276,14 @@
 			<div class="task-modal admin-card">
 				<div class="modal-header">
 					<h2 class="admin-heading-2">Add New Task</h2>
-					<div class="close-btn" on:click={() => (showAddTask = false)}>
+					<div 
+						class="close-btn" 
+						role="button" 
+						tabindex="0"
+						on:click={() => (showAddTask = false)}
+						on:keydown={(e) => e.key === 'Enter' || e.key === ' ' ? (showAddTask = false) : null}
+						aria-label="Close modal"
+					>
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
 						</svg>
@@ -437,12 +458,18 @@
         font-family: var(--font-family-sans);
     }
 
-    .nav-btn:hover {
+    .nav-btn:hover,
+    .nav-btn:focus {
         background: var(--accent-color);
         color: var(--text-white);
         border-color: var(--accent-color);
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
+        outline: none;
+    }
+    
+    .nav-btn:focus {
+        box-shadow: var(--shadow-md), 0 0 0 2px var(--accent-color);
     }
 
         .nav-btn svg {
@@ -781,9 +808,15 @@
         font-weight: 600;
     }
 
-    .close-btn:hover {
+    .close-btn:hover,
+    .close-btn:focus {
         background: rgba(255, 255, 255, 0.2);
-}
+        outline: none;
+    }
+    
+    .close-btn:focus {
+        box-shadow: 0 0 0 2px var(--accent-color);
+    }
 
     .close-btn svg {
         width: 14px;
