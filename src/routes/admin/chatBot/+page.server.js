@@ -55,34 +55,15 @@ export const actions = {
   }
 };
 
-// Page Data
 export async function load() {
   return {
     quickActions: [
-      {
-        title: 'Draft Client Email',
-        prompt: 'Help me draft a professional email to a client about [describe the situation, e.g., property viewing, offer update, market conditions]'
-      },
-      {
-        title: 'Property Valuation',
-        prompt: 'Analyze the market value for a property: [provide address, property type, size, condition] and give comparable market analysis'
-      },
-      {
-        title: 'Investment Analysis',
-        prompt: 'Calculate ROI and investment potential for: [property price, rental income, expenses, location, property type]'
-      },
-      {
-        title: 'Marketing Copy',
-        prompt: 'Create compelling marketing copy for property listing: [describe property features, location, unique selling points]'
-      },
-      {
-        title: 'Legal Guidance',
-        prompt: 'I need legal guidance for real estate matter: [describe situation - contracts, disclosures, compliance issues]'
-      },
-      {
-        title: 'Negotiation Strategy',
-        prompt: 'Help me develop a negotiation strategy for: [buyer/seller scenario, price point, terms, timeline]'
-      }
+      { title: 'Draft Client Email', prompt: 'Help me draft a professional email to a client about [describe the situation, e.g., property viewing, offer update, market conditions]' },
+      { title: 'Property Valuation', prompt: 'Analyze the market value for a property: [provide address, property type, size, condition] and give comparable market analysis' },
+      { title: 'Investment Analysis', prompt: 'Calculate ROI and investment potential for: [property price, rental income, expenses, location, property type]' },
+      { title: 'Marketing Copy', prompt: 'Create compelling marketing copy for property listing: [describe property features, location, unique selling points]' },
+      { title: 'Legal Guidance', prompt: 'I need legal guidance for real estate matter: [describe situation - contracts, disclosures, compliance issues]' },
+      { title: 'Negotiation Strategy', prompt: 'Help me develop a negotiation strategy for: [buyer/seller scenario, price point, terms, timeline]' }
     ]
   };
 }

@@ -2,5 +2,17 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-	plugins: [sveltekit()]
+	plugins: [sveltekit()],
+	css: {
+		devSourcemap: true,
+		postcss: {},
+	},
+	build: {
+		cssCodeSplit: false,
+		rollupOptions: {
+			output: {
+				assetFileNames: 'assets/[name].[hash][extname]'
+			}
+		}
+	}
 });

@@ -9,7 +9,6 @@
   let loading = false;
   let chatContainer;
   let showQuickActions = false;
-  let currentTypingMessage = null;
 
   const initialMessage = {
     role: 'bot',
@@ -21,11 +20,17 @@
     messages = [initialMessage];
   });
 
-  // Handle form submission
+  function scrollToBottom() {
+    setTimeout(() => {
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }, 50);
+  }
+
   function handleSubmit() {
     if (!input.trim()) return;
     
-    // Add user message
     const userMsg = {
       role: 'user',
       text: input.trim(),
@@ -36,86 +41,64 @@
     loading = true;
     showQuickActions = false;
     
-    // Add typing indicator
-    messages = [...messages, {
+    const typingMsg = {
       role: 'bot',
       text: '...',
       isTyping: true,
       timestamp: new Date()
-    }];
+    };
+    messages = [...messages, typingMsg];
 
     return async ({ result }) => {
-      // Remove typing indicator
       messages = messages.filter(msg => !msg.isTyping);
       
       if (result.type === 'success' && result.data?.success) {
-        const botMsg = {
+        messages = [...messages, {
           role: 'bot',
           text: result.data.data.reply,
           timestamp: new Date()
-        };
-        messages = [...messages, botMsg];
+        }];
       } else {
-        const errorMsg = {
+        messages = [...messages, {
           role: 'bot',
           text: result.data?.error || 'Sorry, something went wrong. Please try again.',
           timestamp: new Date(),
           isError: true
-        };
-        messages = [...messages, errorMsg];
+        }];
       }
       
       loading = false;
       input = '';
-      
-      // Scroll to bottom
-      setTimeout(() => {
-        if (chatContainer) {
-          chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-      }, 50);
+      scrollToBottom();
     };
   }
 
-  function useQuickAction(action) {
+  const useQuickAction = (action) => {
     input = action.prompt;
     showQuickActions = false;
-  }
+  };
 
-  function toggleQuickActions() {
-    showQuickActions = !showQuickActions;
-  }
+  const toggleQuickActions = () => (showQuickActions = !showQuickActions);
 
-  function handleKeyDown(e) {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       e.target.form.requestSubmit();
     }
-  }
+  };
 
-  function clearChat() {
-    if (confirm('Are you sure you want to clear the conversation? This action cannot be undone.')) {
+  const clearChat = () => {
+    if (confirm('Are you sure you want to clear the conversation?')) {
       messages = [initialMessage];
       input = '';
       showQuickActions = false;
       loading = false;
-      currentTypingMessage = null;
     }
-  }
+  };
 
-  function copyMessage(text) {
-    navigator.clipboard.writeText(text).then(() => {
-      // Could add a toast notification here
-    });
-  }
-
-  function scrollToBottom() {
-    setTimeout(() => {
-      if (chatContainer) {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }
-    }, 100);
-  }
+  const copyMessage = (text) => {
+    navigator.clipboard.writeText(text);
+  };
 </script>
 
 <div class="admin-container-full chat-app">
@@ -171,22 +154,17 @@
         </button>
       </div>
       <div class="actions-grid">
-        {#each data.quickActions as action, index}
+        {#each data.quickActions as action}
           <button 
             type="button"
             class="template-btn"
             on:click={() => useQuickAction(action)}
           >
-            <div class="template-icon">
-              <i class="fas fa-{index === 0 ? 'comments' : index === 1 ? 'chart-line' : index === 2 ? 'gavel' : index === 3 ? 'bullhorn' : 'file-alt'}"></i>
-            </div>
             <div class="template-content">
               <strong>{action.title}</strong>
-              <span>{action.prompt.substring(0, 45)}...</span>
+              <span>{action.prompt.substring(0, 50)}...</span>
             </div>
-            <div class="template-arrow">
-              <i class="fas fa-arrow-right"></i>
-            </div>
+            <i class="fas fa-arrow-right"></i>
           </button>
         {/each}
       </div>
@@ -276,14 +254,12 @@
 </div>
 
 <style>
-  /* === OPTIMIZED CHAT APPLICATION STYLES === */
-  
+  /* Chat Application */
   .chat-app {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: var(--gradient-bg);
-    font-family: var(--font-family-sans);
+    background: var(--bg-primary);
   }
 
   /* === HEADER SECTION === */
@@ -621,16 +597,13 @@
     transition: all 0.3s ease;
   }
 
-  .template-btn:hover .template-arrow {
-    color: #0ea5e9;
-    transform: translateX(4px);
-  }
+
 
   /* Messages Container */
   .messages-container {
     flex: 1;
     overflow: hidden;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: var(--bg-accent);
   }
 
   .messages {
@@ -899,49 +872,28 @@
   }
 
   .send-btn {
-    background: linear-gradient(135deg, #0ea5e9 0%, #1a2236 100%);
-    color: white;
+    background: var(--accent-color);
+    color: var(--text-white);
     border: none;
-    border-radius: 12px;
-    padding: 0.875rem 1.75rem;
-    font-weight: 600;
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-6);
+    font-weight: var(--font-weight-semibold);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
     min-width: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .send-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
-  }
-
-  .send-btn:hover::before {
-    left: 100%;
+    gap: var(--space-2);
   }
 
   .send-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
-    background: linear-gradient(135deg, #0284c7 0%, #1a2236 100%);
+    background: var(--accent-dark);
   }
 
   .send-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    transform: none;
   }
 
   .input-footer {
