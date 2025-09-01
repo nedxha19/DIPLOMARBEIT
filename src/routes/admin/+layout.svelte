@@ -356,35 +356,35 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
 
   /* === ESSENTIAL TEXT COLOR UTILITIES === */
   :global(.text-primary) {
-    color: var(--text-primary) !important;
+    color: var(--text-primary, #000000);
   }
 
   :global(.text-secondary) {
-    color: var(--text-secondary) !important;
+    color: var(--text-secondary, #4b5563);
   }
 
   :global(.text-muted) {
-    color: var(--text-muted) !important;
+    color: var(--text-muted, #6b7280);
   }
 
   :global(.text-white) {
-    color: var(--text-white) !important;
+    color: var(--text-white, #ffffff);
   }
 
   :global(.text-label) {
-    color: var(--text-label) !important;
+    color: var(--text-label, #374151);
   }
 
   :global(.text-success) {
-    color: var(--success-color) !important;
+    color: var(--success-color, #10b981);
   }
 
   :global(.text-error) {
-    color: var(--error-color) !important;
+    color: var(--error-color, #ef4444);
   }
 
   :global(.text-warning) {
-    color: var(--warning-color) !important;
+    color: var(--warning-color, #f59e0b);
   }
 
   /* === SCOPED ADMIN CONTENT STYLING === */
@@ -417,36 +417,33 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
     font-weight: var(--font-weight-medium);
   }
 
-  /* === ADMIN DASHBOARD HEADER TEXT OVERRIDES === */
+  /* === ADMIN DASHBOARD HEADER STYLES === */
   /* Professional header styling with proper white text on gradient backgrounds */
 
   /* Base header containers */
-  :global(.admin-container header.page-header),
-  :global(.admin-container .page-header),
-  :global(.admin-container .header),
-  :global(.admin-container-full .header) {
-    color: var(--text-white) !important;
-    background: var(--gradient-header) !important;
+  :global(.admin-page-header) {
+    color: var(--text-white, #ffffff);
+    background: var(--gradient-header, linear-gradient(135deg, #1a2236 0%, #0ea5e9 100%));
   }
 
-  /* All text elements in headers should be white */
-  :global(.admin-container header.page-header *:not(.sidebar *)),
-  :global(.admin-container .page-header *:not(.sidebar *)),
-  :global(.admin-container .header *:not(.sidebar *)),
-  :global(.admin-container-full .header *:not(.sidebar *)),
-  :global(.admin-container-full header *:not(.sidebar *)) {
-    color: var(--text-white) !important;
+  /* All text elements in headers use white text */
+  :global(.admin-page-header h1),
+  :global(.admin-page-header h2),
+  :global(.admin-page-header h3),
+  :global(.admin-page-header p),
+  :global(.admin-page-header span) {
+    color: var(--text-white, #ffffff);
   }
 
-  /* Specific override for chat app headers */
+  /* Chat app header styles */
   :global(.chat-app .header),
   :global(.chat-app header) {
-    color: var(--text-white) !important;
+    color: var(--text-white, #ffffff);
   }
 
   :global(.chat-app .header *),
   :global(.chat-app header *) {
-    color: var(--text-white) !important;
+    color: var(--text-white, #ffffff);
   }
 
   /* Header content sections */
@@ -583,71 +580,67 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
     color: #f3f4f6; /* Fallback for proper contrast on dark background */
   }
 
-  /* === AUTHENTICATION PAGES OVERRIDES === */
+  /* === AUTHENTICATION PAGES STYLES === */
   /* Professional, clean system for auth pages on dark background */
   
-  /* 1. Container base - ensure proper text inheritance */
   :global(.admin-container-auth) {
-    color: var(--text-white) !important;
+    color: var(--text-white, #ffffff);
   }
   
-  /* 2. Headers should be bright white for visibility */
-  :global(.admin-container-auth h1, .admin-container-auth h2, .admin-container-auth h3, 
-          .admin-container-auth h4, .admin-container-auth h5, .admin-container-auth h6) {
-    color: var(--text-white) !important;
-    font-weight: var(--font-weight-semibold);
+  :global(.admin-container-auth h1), 
+  :global(.admin-container-auth h2), 
+  :global(.admin-container-auth h3), 
+  :global(.admin-container-auth h4), 
+  :global(.admin-container-auth h5), 
+  :global(.admin-container-auth h6) {
+    color: var(--text-white, #ffffff);
+    font-weight: var(--font-weight-semibold, 600);
   }
   
-  /* 3. Body text should be visible with slight transparency */
-  :global(.admin-container-auth p, .admin-container-auth span) {
-    color: var(--text-white) !important;
+  :global(.admin-container-auth p), 
+  :global(.admin-container-auth span) {
+    color: var(--text-white, #ffffff);
     opacity: 0.9;
   }
   
-  /* 4. Form labels should be white with good visibility */
   :global(.admin-container-auth label) {
-    color: var(--text-white) !important;
+    color: var(--text-white, #ffffff);
     opacity: 0.85;
   }
   
-  /* 5. Logo icons should be accent blue for brand consistency */
-  :global(.admin-container-auth .logo-icon,
-          .admin-container-auth .fa-user-cog,
-          .admin-container-auth .fa-user-plus) {
-    color: var(--accent-color) !important;
+  :global(.admin-container-auth .logo-icon),
+  :global(.admin-container-auth .fa-user-cog),
+  :global(.admin-container-auth .fa-user-plus) {
+    color: var(--accent-color, #0ea5e9);
   }
   
-  /* 6. Form input icons should be visible white */
   :global(.admin-container-auth .input-group i) {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(255, 255, 255, 0.7);
   }
   
-  /* 7. Input fields with proper contrast */
   :global(.admin-container-auth input) {
-    color: var(--text-white) !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-white, #ffffff);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
   
   :global(.admin-container-auth input::placeholder) {
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: rgba(255, 255, 255, 0.6);
   }
   
   :global(.admin-container-auth input:focus) {
-    border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3) !important;
+    border-color: var(--accent-color, #0ea5e9);
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3);
   }
   
-  /* 8. Buttons should have white text */
   :global(.admin-container-auth button) {
-    color: var(--text-white) !important;
+    color: var(--text-white, #ffffff);
   }
   
-  /* 9. Error messages with proper visibility */
   :global(.admin-container-auth .error-message) {
-    color: #ef4444 !important;
-    background: rgba(239, 68, 68, 0.1) !important;
-    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: var(--error-color, #ef4444);
+    background: var(--error-light, rgba(239, 68, 68, 0.1));
+    border-color: rgba(239, 68, 68, 0.3);
   }
 
   /* === GLOBAL CHATBOT STYLES === */

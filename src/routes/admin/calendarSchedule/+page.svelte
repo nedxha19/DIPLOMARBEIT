@@ -576,12 +576,12 @@
 
     .task-title .admin-text-label {
         margin: 0;
-        color: var(--text-primary) !important;
+        color: var(--text-primary, #000000);
     }
 
     .task-item.completed .task-title .admin-text-label {
         text-decoration: line-through;
-        color: var(--text-muted) !important;
+        color: var(--text-muted, #6b7280);
     }
 
     .task-author {
@@ -593,7 +593,7 @@
 
     .task-description {
         margin: 0;
-        color: var(--text-secondary, #4b5563) !important;
+        color: var(--text-secondary, #4b5563);
     }
 
     .task-toggle {
@@ -655,7 +655,7 @@
     }
 
     .modal-header .admin-heading-2 {
-        color: var(--text-white, #ffffff) !important;
+        color: var(--text-white, #ffffff);
         margin: 0;
     }
 
@@ -696,7 +696,7 @@
     }
 
     .form-group .admin-text-label {
-        color: var(--text-label, #374151) !important;
+        color: var(--text-label, #374151);
     }
 
     .error-message {

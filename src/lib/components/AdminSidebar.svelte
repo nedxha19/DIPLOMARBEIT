@@ -72,12 +72,13 @@ onMount(() => {
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-  :global(:root) {
+  /* Sidebar-specific CSS variables - scoped to avoid conflicts */
+  .sidebar {
     --sidebar-bg: #1a2236;
     --sidebar-active: #0ea5e9;
     --sidebar-hover: rgba(14, 165, 233, 0.15);
-    --text-primary: #f3f4f6;
-    --text-secondary: #9ca3af;
+    --sidebar-text-primary: #f3f4f6;
+    --sidebar-text-secondary: #9ca3af;
     --transition-speed: 0.3s;
     --border-radius: 8px;
     --icon-size: 1.25rem;
@@ -108,7 +109,7 @@ onMount(() => {
   .toggle-btn {
     background: transparent;
     border: none;
-    color: var(--text-white);
+    color: var(--sidebar-text-primary);
     cursor: pointer;
     width: 32px;
     height: 32px;
@@ -119,7 +120,7 @@ onMount(() => {
     transition: transform var(--transition-speed), color 0.2s ease;
   }
   .toggle-btn:hover {
-    color: var(--text-white);
+    color: var(--sidebar-text-primary);
     background: rgba(255, 255, 255, 0.05);
   }
   .sidebar.hide .toggle-btn {
@@ -132,7 +133,7 @@ onMount(() => {
     text-decoration: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     margin-bottom: 12px;
-    color: var(--text-white);
+    color: var(--sidebar-text-primary);
   }
   .logo-icon {
     font-size: 22px;
@@ -172,17 +173,17 @@ onMount(() => {
     align-items: center;
     height: 100%;
     padding: 0 12px;
-    color: var(--text-white);
+    color: var(--sidebar-text-primary);
     text-decoration: none;
     border-radius: var(--border-radius);
     transition: color 0.2s ease, background var(--transition-speed);
   }
   .nav-link:hover {
-    color: var(--text-white);
+    color: var(--sidebar-text-primary);
     background: rgba(255, 255, 255, 0.03);
   }
   .menu-item.active .nav-link {
-    color: var(--text-white);
+    color: var(--sidebar-text-primary);
   }
   .nav-link i {
     min-width: 32px;
@@ -191,7 +192,7 @@ onMount(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-white);
+    color: var(--sidebar-text-primary);
   }
   .menu-item.active .nav-link i {
     color: var(--sidebar-active);
@@ -223,7 +224,7 @@ onMount(() => {
   }
   .user-info {
     padding: 16px;
-    color: var(--text-white);
+    color: var(--sidebar-text-primary);
     font-size: 14px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
