@@ -1,42 +1,22 @@
-import { createConnection } from '$lib/db/mysql';
 import { error } from '@sveltejs/kit';
+import { db } from '$lib/db/helpers';
 
-const parseJsonField = (value) => {
-    if (!value) return [];
-    try {
-        return JSON.parse(value);
-    } catch {
-        return [];
-    }
+export const load = async ({ params }) => {
+	const rows = await db(`SELECT p.*, pd.description, pd.gallery_images, pd.virtual_tour_url, pd.year_built, pd.last_renovation, pd.energy_rating, pd.status, pd.contact_info FROM properties p LEFT JOIN property_details pd ON p.id=pd.property_id WHERE p.id=?`, [params.id]);
+	if (!rows.length) error(404, 'Property not found');
+	
+	const r = rows[0];
+	const gallery = r.gallery_images ? JSON.parse(r.gallery_images) || [] : [];
+	
+	return {
+		property: {
+			id: r.id, image: r.image, location: r.location, type: r.type, price: Number(r.price),
+			bedrooms: Number(r.bedrooms), bathrooms: Number(r.bathrooms), square_foot: Number(r.square_foot),
+			address: r.address ?? '', description: r.description ?? '',
+			gallery_images: gallery.length ? gallery : [r.image].filter(Boolean),
+			virtual_tour_url: r.virtual_tour_url ?? null, year_built: r.year_built ?? null,
+			last_renovation: r.last_renovation ?? null, energy_rating: r.energy_rating ?? null,
+			status: r.status ?? 'active', contact_info: r.contact_info ?? null
+		}
+	};
 };
-
-export async function load({ params }) {
-    const { id } = params;
-    const connection = await createConnection();
-    
-    try {
-        const [propertyResult] = await connection.execute(`
-            SELECT p.*, pd.title, pd.overview_description, pd.property_type, pd.year_built, 
-                   pd.square_footage, pd.lot_size, pd.bedrooms, pd.bathrooms, pd.garage, 
-                   pd.heating, pd.cooling, pd.architecture, pd.roof, pd.exterior, 
-                   pd.gallery_images, pd.virtual_tour_url, pd.video_tour_url, 
-                   pd.nearby_schools, pd.nearby_shopping, pd.nearby_companies, 
-                   pd.nearby_transport, pd.location_description, pd.map_embed_url
-            FROM properties p
-            LEFT JOIN property_details pd ON p.id = pd.property_id
-            WHERE p.id = ?
-        `, [id]);
-        
-        if (propertyResult.length === 0) throw error(404, 'Property not found');
-        
-        const property = propertyResult[0];
-        
-        // Parse JSON fields
-        ['gallery_images', 'nearby_schools', 'nearby_shopping', 'nearby_companies', 'nearby_transport']
-            .forEach(field => property[field] = parseJsonField(property[field]));
-        
-        return { property };
-    } finally {
-        connection.release();
-    }
-}

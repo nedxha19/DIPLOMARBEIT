@@ -13,7 +13,7 @@ import AdminSidebar from '$lib/components/AdminSidebar.svelte';
 {:else}
   <div class="admin-layout { $isSidebarHidden ? 'sidebar-hidden' : '' }">
     <AdminSidebar bind:isSidebarHidden={$isSidebarHidden} />
-    <main class="content { $page.url.pathname === '/admin/calendarSchedule' ? 'no-padding' : '' }">
+    <main class="content { $page.url.pathname === '/admin/calendarSchedule' || $page.url.pathname === '/admin/chatBot' ? 'no-padding' : '' }">
       <slot />
     </main>
   </div>

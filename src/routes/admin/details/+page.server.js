@@ -1,122 +1,59 @@
-import { createConnection } from '$lib/db/mysql';
-import { redirect, error } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
+import { db } from '$lib/db/helpers';
 import { put } from '@vercel/blob';
 import { BLOB_READ_WRITE_TOKEN } from '$env/static/private';
 
-export async function load({ locals }) {
-    if (!locals.user) throw redirect(302, '/admin/login');
-
-    const connection = await createConnection();
-    try {
-        const [properties, existingDetails] = await Promise.all([
-            connection.execute('SELECT id, location, type, address, price FROM properties ORDER BY id DESC'),
-            connection.execute(`
-                SELECT pd.*, p.location, p.type, p.address 
-                FROM property_details pd 
-                JOIN properties p ON pd.property_id = p.id 
-                ORDER BY pd.created_at DESC
-            `)
-        ]);
-        return { properties: properties[0], existingDetails: existingDetails[0] };
-    } finally {
-        connection.release();
-    }
-}
-
-const extractFormData = (formData) => ({
-    propertyId: formData.get('property_id'),
-    title: formData.get('title') || null,
-    overviewDescription: formData.get('overview_description'),
-    propertyType: formData.get('property_type'),
-    yearBuilt: parseInt(formData.get('year_built')) || null,
-    squareFootage: parseInt(formData.get('square_footage')) || null,
-    lotSize: formData.get('lot_size'),
-    bedrooms: parseInt(formData.get('bedrooms')) || null,
-    bathrooms: parseInt(formData.get('bathrooms')) || null,
-    garage: formData.get('garage'),
-    heating: formData.get('heating'),
-    cooling: formData.get('cooling'),
-    architecture: formData.get('architecture'),
-    roof: formData.get('roof'),
-    exterior: formData.get('exterior'),
-    virtualTourUrl: formData.get('virtual_tour_url') || null,
-    locationDescription: formData.get('location_description'),
-    nearbySchools: formData.getAll('nearby_schools[]').filter(Boolean),
-    nearbyShopping: formData.getAll('nearby_shopping[]').filter(Boolean),
-    nearbyCompanies: formData.getAll('nearby_companies[]').filter(Boolean),
-    nearbyTransport: formData.getAll('nearby_transport[]').filter(Boolean),
-    mapEmbedUrl: formData.get('map_embed_url')
-});
-
-const uploadFiles = async (files, prefix) => {
-    return Promise.all(
-        files
-            .filter(file => file?.size > 0)
-            .map(async (file, i) => {
-                const path = `property_details/${Date.now()}-${prefix}-${i}-${file.name.replace(/\s+/g, '_')}`;
-                const { url } = await put(path, file, { access: 'public', token: BLOB_READ_WRITE_TOKEN });
-                return url;
-            })
-    );
+export const load = async ({ locals }) => {
+	if (!locals.user) throw redirect(302, '/admin/login');
+	
+	const [properties, existingDetails] = await Promise.all([
+		db('SELECT id, location, type, address, price FROM properties ORDER BY id DESC'),
+		db(`SELECT pd.*, p.location, p.type, p.address FROM property_details pd JOIN properties p ON pd.property_id=p.id ORDER BY pd.created_at DESC`)
+	]);
+	
+	return { properties, existingDetails };
 };
 
+const upload = (files, prefix) => 
+	Promise.all(files.filter(f => f?.size > 0).map(async (f, i) => 
+		(await put(`property_details/${Date.now()}-${prefix}-${i}-${f.name.replace(/\s+/g, '_')}`, f, { access: 'public', token: BLOB_READ_WRITE_TOKEN })).url
+	));
+
 export const actions = {
-    saveDetails: async ({ request }) => {
-        const formData = await request.formData();
-        const data = extractFormData(formData);
-        
-        if (!data.propertyId) throw error(400, 'Property ID is required');
-
-        const connection = await createConnection();
-        try {
-            const [galleryUrls, videoUrl, existing] = await Promise.all([
-                uploadFiles(formData.getAll('gallery_images'), 'gallery'),
-                uploadFiles([formData.get('video_tour')], 'video').then(urls => urls[0] || null),
-                connection.execute('SELECT id FROM property_details WHERE property_id = ?', [data.propertyId])
-            ]);
-
-            const params = [
-                data.title, data.overviewDescription, data.propertyType, data.yearBuilt, 
-                data.squareFootage, data.lotSize, data.bedrooms, data.bathrooms, 
-                data.garage, data.heating, data.cooling, data.architecture,
-                data.roof, data.exterior, JSON.stringify(galleryUrls), 
-                data.virtualTourUrl, videoUrl, JSON.stringify(data.nearbySchools), 
-                JSON.stringify(data.nearbyShopping), JSON.stringify(data.nearbyCompanies), 
-                JSON.stringify(data.nearbyTransport), data.locationDescription, data.mapEmbedUrl
-            ];
-
-            const isUpdate = existing[0].length > 0;
-            const query = isUpdate 
-                ? `UPDATE property_details SET title=?, overview_description=?, property_type=?, year_built=?, square_footage=?, lot_size=?, bedrooms=?, bathrooms=?, garage=?, heating=?, cooling=?, architecture=?, roof=?, exterior=?, gallery_images=?, virtual_tour_url=?, video_tour_url=?, nearby_schools=?, nearby_shopping=?, nearby_companies=?, nearby_transport=?, location_description=?, map_embed_url=?, updated_at=CURRENT_TIMESTAMP WHERE property_id=?`
-                : `INSERT INTO property_details (property_id, title, overview_description, property_type, year_built, square_footage, lot_size, bedrooms, bathrooms, garage, heating, cooling, architecture, roof, exterior, gallery_images, virtual_tour_url, video_tour_url, nearby_schools, nearby_shopping, nearby_companies, nearby_transport, location_description, map_embed_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            
-            const queryParams = isUpdate ? [...params, data.propertyId] : [data.propertyId, ...params];
-            await connection.execute(query, queryParams);
-
-            return { success: true, message: 'Property details saved successfully!' };
-        } catch (err) {
-            console.error('Database error:', err);
-            throw error(500, 'Failed to save property details');
-        } finally {
-            connection.release();
-        }
-    },
-    
-    deleteDetails: async ({ request }) => {
-        const formData = await request.formData();
-        const detailsId = formData.get('details_id');
-        
-        if (!detailsId) throw error(400, 'Details ID is required');
-
-        const connection = await createConnection();
-        try {
-            await connection.execute('DELETE FROM property_details WHERE id = ?', [detailsId]);
-            return { success: true, message: 'Property details deleted successfully!' };
-        } catch (err) {
-            console.error('Delete error:', err);
-            throw error(500, 'Failed to delete property details');
-        } finally {
-            connection.release();
-        }
-    }
+	saveDetails: async ({ request }) => {
+		const fd = await request.formData();
+		const pid = fd.get('property_id');
+		
+		const [gallery, video, existing] = await Promise.all([
+			upload(fd.getAll('gallery_images'), 'gallery'),
+			upload([fd.get('video_tour')], 'video').then(u => u[0] || null),
+			db('SELECT id FROM property_details WHERE property_id=?', [pid])
+		]);
+		
+		const params = [
+			fd.get('title'), fd.get('overview_description'), fd.get('property_type'),
+			fd.get('year_built'), fd.get('square_footage'), fd.get('lot_size'),
+			fd.get('bedrooms'), fd.get('bathrooms'), fd.get('garage'),
+			fd.get('heating'), fd.get('cooling'), fd.get('architecture'),
+			fd.get('roof'), fd.get('exterior'), JSON.stringify(gallery),
+			fd.get('virtual_tour_url'), video,
+			JSON.stringify(fd.getAll('nearby_schools[]').filter(Boolean)),
+			JSON.stringify(fd.getAll('nearby_shopping[]').filter(Boolean)),
+			JSON.stringify(fd.getAll('nearby_companies[]').filter(Boolean)),
+			JSON.stringify(fd.getAll('nearby_transport[]').filter(Boolean)),
+			fd.get('location_description'), fd.get('map_embed_url')
+		];
+		
+		const sql = existing.length > 0
+			? `UPDATE property_details SET title=?, overview_description=?, property_type=?, year_built=?, square_footage=?, lot_size=?, bedrooms=?, bathrooms=?, garage=?, heating=?, cooling=?, architecture=?, roof=?, exterior=?, gallery_images=?, virtual_tour_url=?, video_tour_url=?, nearby_schools=?, nearby_shopping=?, nearby_companies=?, nearby_transport=?, location_description=?, map_embed_url=?, updated_at=CURRENT_TIMESTAMP WHERE property_id=?`
+			: `INSERT INTO property_details (property_id, title, overview_description, property_type, year_built, square_footage, lot_size, bedrooms, bathrooms, garage, heating, cooling, architecture, roof, exterior, gallery_images, virtual_tour_url, video_tour_url, nearby_schools, nearby_shopping, nearby_companies, nearby_transport, location_description, map_embed_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+		
+		await db(sql, existing.length > 0 ? [...params, pid] : [pid, ...params]);
+		return { success: true };
+	},
+	
+	deleteDetails: async ({ request }) => {
+		await db('DELETE FROM property_details WHERE id=?', [(await request.formData()).get('details_id')]);
+		return { success: true };
+	}
 };

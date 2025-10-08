@@ -2,10 +2,11 @@ import { createConnection } from './mysql';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
-const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; 
 
 export async function createSessionToken(userId) {
   const db = await createConnection();
+  console.log(db);
   try {
     const token = uuidv4();
     const expires = new Date(Date.now() + SESSION_DURATION);
@@ -28,7 +29,6 @@ export async function login(email, password) {
     const isValidPassword = await bcrypt.compare(password, users[0].password_hash);
     if (!isValidPassword) return { token: null, message: 'Incorrect password' };
 
-    // Clear existing session and create new token
     await db.execute(
       'UPDATE users SET session_token = NULL, session_expiration = NULL WHERE id = ?',
       [users[0].id]

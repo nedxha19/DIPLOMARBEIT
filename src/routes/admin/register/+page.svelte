@@ -18,7 +18,8 @@
           <i class="fas fa-envelope"></i>
           <input 
             type="email" name="email" id="email" required 
-            placeholder="Enter the new admin email" 
+            placeholder="Enter the new admin email"
+            autocomplete="email"
           />
         </div>
       </div>
@@ -30,6 +31,7 @@
           <input 
             type="text" name="username" id="username" required  
             placeholder="Choose a username for the new admin"
+            autocomplete="username"
           />
         </div>
       </div>
@@ -40,7 +42,8 @@
           <i class="fas fa-lock"></i>
           <input   
             type="password" name="password" id="password" required 
-            placeholder="Create a password" minlength="8" 
+            placeholder="Create a password" minlength="8"
+            autocomplete="new-password"
           />
         </div>
       </div>
@@ -51,7 +54,8 @@
           <i class="fas fa-lock"></i>
           <input 
             type="password" name="confirmPassword" id="confirmPassword" required 
-            placeholder="Confirm the password" minlength="8" 
+            placeholder="Confirm the password" minlength="8"
+            autocomplete="new-password"
           />
         </div>
       </div>
@@ -72,7 +76,6 @@
 </div>
 
 <style>
-  /* Remove duplicate styles - using global .admin-container-auth */
 
   .register-card {
     width: 100%;

@@ -2,7 +2,6 @@
     import { enhance } from '$app/forms';
     let { form, data } = $props();
     
-    // Form state management
     let currentStep = $state(1);
     let formData = $state({
         image: null,
@@ -15,7 +14,6 @@
         address: ''
     });
     
-    // Update step based on form completion
     $effect(() => {
         if (formData.image) {
             currentStep = Math.max(currentStep, 2);
@@ -30,21 +28,18 @@
     }
     
     function handleSubmit() {
-        return async ({ result, update }) => {
-            if (result.type === 'success') {
-                // Reset form
-                formData = {
-                    image: null,
-                    location: '',
-                    type: '',
-                    price: '',
-                    bedrooms: '',
-                    bathrooms: '',
-                    square_foot: '',
-                    address: ''
-                };
-                currentStep = 1;
-            }
+        return async ({ update }) => {
+            formData = {
+                image: null,
+                location: '',
+                type: '',
+                price: '',
+                bedrooms: '',
+                bathrooms: '',
+                square_foot: '',
+                address: ''
+            };
+            currentStep = 1;
             await update();
         };
     }
@@ -106,6 +101,7 @@
                             name="image" 
                             required 
                             accept="image/*"
+                            autocomplete="off"
                             onchange={handleFileChange}
                         />
                         {#if formData.image}
@@ -136,13 +132,14 @@
                             name="location" 
                             bind:value={formData.location}
                             required 
-                            placeholder="e.g., Manhattan, New York" 
+                            placeholder="e.g., Manhattan, New York"
+                            autocomplete="off"
                         />
         </div>
 
                     <div class="form-group">
                         <label for="type">Property Type *</label>
-                        <select id="type" name="type" bind:value={formData.type} required>
+                        <select id="type" name="type" bind:value={formData.type} required autocomplete="off">
                             <option value="">Select Property Type</option>
                             <option value="Apartment">Apartment</option>
                             <option value="House">House</option>
@@ -162,7 +159,8 @@
                             bind:value={formData.price}
                             step="0.01" 
                             required 
-                            placeholder="0.00" 
+                            placeholder="0.00"
+                            autocomplete="off"
                         />
                     </div>
 
@@ -175,7 +173,8 @@
                             bind:value={formData.bedrooms}
                             required 
                             min="0" 
-                            placeholder="0" 
+                            placeholder="0"
+                            autocomplete="off"
                         />
                     </div>
 
@@ -189,7 +188,8 @@
                             required 
                             min="0" 
                             step="0.5" 
-                            placeholder="0" 
+                            placeholder="0"
+                            autocomplete="off"
                         />
                     </div>
 
@@ -202,7 +202,8 @@
                             bind:value={formData.square_foot}
                             required 
                             min="0" 
-                            placeholder="0" 
+                            placeholder="0"
+                            autocomplete="off"
                         />
         </div>
 
@@ -213,7 +214,8 @@
                             id="address" 
                             name="address" 
                             bind:value={formData.address}
-                            placeholder="Full street address (optional)" 
+                            placeholder="Full street address (optional)"
+                            autocomplete="street-address"
                         />
                     </div>
                 </div>

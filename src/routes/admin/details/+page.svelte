@@ -424,16 +424,9 @@
                 <p>Location details and map information</p>
               </div>
             </div>
-            <div class="form-grid">
+           
               <div class="form-group full-width">
-                <label for="location_description">
-                  <i class="fas fa-align-left"></i>
-                  Location Description *
-                </label>
-                <textarea id="location_description" name="location_description" rows="6" required
-                          placeholder="Describe the location and neighborhood..."></textarea>
-              </div>
-
+                
               <div class="form-group full-width">
                 <label for="map_embed_url">
                   <i class="fas fa-map"></i>
