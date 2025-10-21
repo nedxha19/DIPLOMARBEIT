@@ -1,234 +1,195 @@
 <script>
-  import { onMount } from 'svelte'; // Run code when component mounts
-  import '@fortawesome/fontawesome-free/css/all.min.css'; // Font Awesome icons
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores';
+  import { fly, fade } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
+  import '@fortawesome/fontawesome-free/css/all.min.css';
 
-  export let isSidebarHidden; //It decides if the sidebar should be collapsed (hidden) or fully open. 
-  let activeIndex = 0;  //Keeps track of which menu item is currently selected or clicked.
-  // So, when the page loads for the first time, "Property System" will be highlighted by default.
-
-
-
-//The activeIndex helps us highlight the correct menu item visually.
-//Just an array of objects.
+  export let isSidebarHidden;
+  
   const menuItems = [
-    { icon: 'home', text: 'Property System', href: '/admin/propertySystem', idx: 0 },
-    { icon: 'plus-circle', text: 'Add Property', href: '/admin/propertySystem/addProperty', idx: 1 },
-    { icon: 'info-circle', text: 'Details', href: '/admin/details', idx: 2 },
-    { icon: 'calendar-alt', text: 'Calendar Schedule', href: '/admin/calendarSchedule', idx: 3 },
-    { icon: 'message', text: 'Chat Bot', href: '/admin/chatBot', idx: 4 },
-    { icon: 'sign-out-alt', text: 'Logout', href: '/admin/logout', idx: 5 }
+    { icon: 'home', label: 'Property System', href: '/admin/propertySystem'},
+    { icon: 'plus-circle', label: 'Add Property', href: '/admin/propertySystem/addProperty' },
+    { icon: 'info-circle', label: 'Property Details', href: '/admin/details' },
+    { icon: 'calendar-alt', label: 'Schedule', href: '/admin/calendarSchedule' },
+    { icon: 'message', label: 'AI Assistant', href: '/admin/chatBot' },
+    { icon: 'sign-out-alt', label: 'Logout', href: '/admin/logout' }
   ];
-// Controls if the Sidebar  true/false (open ↔ closed).
+  
   function toggleSidebar() {
     isSidebarHidden = !isSidebarHidden;
   }
-// If isSidebarHidden = false, it becomes true
-// If isSidebarHidden = true, it becomes false
+  
+  // Auto-collapse on mobile
+  onMount(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        isSidebarHidden = true;
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  });
 
- //Remember which menu item was clicked.
-  function setActive(index) {
-    activeIndex = index;
+  $: currentPath = $page.url.pathname;
+  
+  function isActive(href) {
+    // Exact match for logout
+    if (href === '/admin/logout') {
+      return currentPath === href;
+    }
+    // Exact match or starts with (for nested routes)
+    return currentPath === href || currentPath.startsWith(href + '/');
   }
- //  Makes sidebar auto-collapse on phones/tablets (< 768 px wide).
-onMount(() => {
-  const handleResize = () => {
-    isSidebarHidden = window.innerWidth < 768; // shrink on small screens
-  };
-  handleResize();                       // run once now
-  window.addEventListener('resize', handleResize); // run on every resize
-  return () => window.removeEventListener('resize', handleResize); // clean-up
-});
 </script>
 
-<nav class="sidebar {isSidebarHidden ? 'hide' : ''}">
-  <div class="toggle-container">
-    <!-- svelte-ignore a11y_consider_explicit_label -->
-    <button class="toggle-btn" on:click={toggleSidebar}>
-      <i class="fas fa-chevron-left"></i> 
-    </button>
+<!-- Ultra-modern sidebar with Tailwind CSS and advanced animations -->
+<aside 
+  class="fixed top-0 left-0 h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl z-50 transition-all duration-300 ease-in-out {isSidebarHidden ? 'w-20' : 'w-72'}"
+  in:fly={{ x: -100, duration: 400, easing: quintOut }}
+>
+  <!-- Animated gradient overlay -->
+  <div class="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-orange-500/5 pointer-events-none"></div>
+  
+  <!-- Glow effects -->
+  <div class="absolute -top-24 -left-24 w-48 h-48 bg-sky-500/20 rounded-full blur-3xl animate-pulse"></div>
+  <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+  
+  <div class="relative h-full flex flex-col overflow-hidden">
+    <!-- Toggle Button -->
+    <div class="flex {isSidebarHidden ? 'justify-center' : 'justify-end'} px-5 pt-6 pb-4">
+      <button
+        on:click={toggleSidebar}
+        class="group relative w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-400/50 transition-all duration-300 hover:scale-110 hover:rotate-180"
+        aria-label="Toggle sidebar"
+      >
+        <i class="fas fa-{isSidebarHidden ? 'chevron-right' : 'chevron-left'} text-sky-400 group-hover:text-sky-300 transition-colors duration-300"></i>
+        
+        <!-- Ripple effect -->
+        <div class="absolute inset-0 rounded-xl bg-sky-400/20 scale-0 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+      </button>
+    </div>
+
+    <!-- Logo/Brand -->
+    <a
+      href="/"
+      class="flex items-center gap-3 px-5 pb-6 mb-2 border-b border-white/5 group transition-all duration-300 hover:border-white/10"
+    >
+      <!-- Animated icon with gradient -->
+      <div class="relative">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500 to-orange-500 flex items-center justify-center shadow-lg shadow-sky-500/30 group-hover:shadow-xl group-hover:shadow-sky-500/50 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
+          <i class="fas fa-user-cog text-white text-lg"></i>
+        </div>
+        <!-- Glow effect -->
+        <div class="absolute inset-0 bg-gradient-to-br from-sky-500 to-orange-500 rounded-xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
+      </div>
+      
+      <div class="flex-1 overflow-hidden transition-all duration-300 {isSidebarHidden ? 'w-0 opacity-0' : 'w-auto opacity-100'}">
+        <span class="block text-lg font-bold text-white tracking-tight whitespace-nowrap">Admin Panel</span>
+        <span class="block text-xs text-slate-400 whitespace-nowrap">Houseo Dashboard</span>
+      </div>
+    </a>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-3 py-4 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20">
+      <ul class="space-y-1.5">
+        {#each menuItems as item, i}
+          <li
+            in:fly={{ x: -20, duration: 300, delay: i * 50, easing: quintOut }}
+          >
+            <a
+              href={item.href}
+              class="group relative flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 {isActive(item.href) 
+                ? 'bg-gradient-to-r from-sky-500/20 to-orange-500/20 text-white shadow-lg shadow-sky-500/10'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }"
+            >
+              <!-- Active indicator -->
+              {#if isActive(item.href)}
+                <div 
+                  class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-sky-400 to-orange-400 rounded-r-full"
+                  in:fly={{ x: -10, duration: 300 }}
+                ></div>
+              {/if}
+              
+              <!-- Icon -->
+              <div class="relative">
+                <div class="w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 {isActive(item.href)
+                  ? 'bg-gradient-to-br from-sky-500 to-orange-500 shadow-lg shadow-sky-500/30'
+                  : 'bg-white/5 group-hover:bg-white/10 group-hover:scale-110'
+                }">
+                  <i class="fas fa-{item.icon} text-base {isActive(item.href) ? 'text-white' : 'text-slate-300 group-hover:text-white'}"></i>
+                </div>
+                
+                <!-- Pulse effect for active item -->
+                {#if isActive(item.href)}
+                  <div class="absolute inset-0 rounded-lg bg-sky-400 animate-ping opacity-20"></div>
+                {/if}
+              </div>
+              
+              <!-- Label -->
+              <span class="font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 {isSidebarHidden ? 'w-0 opacity-0' : 'w-auto opacity-100'}">
+                {item.label}
+              </span>
+              
+              <!-- Hover effect background -->
+              <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-sky-500/0 via-sky-500/5 to-orange-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+              
+              <!-- Arrow indicator -->
+              {#if !isSidebarHidden}
+                <i class="fas fa-chevron-right text-xs ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 {isActive(item.href) ? 'text-white' : 'text-slate-500'}"></i>
+              {/if}
+            </a>
+          </li>
+        {/each}
+      </ul>
+    </nav>
+
+    <!-- User Info Footer -->
+    <div class="px-5 py-4 border-t border-white/5">
+      <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 transition-all duration-300 hover:bg-white/10 hover:border-sky-400/30">
+        <!-- Avatar -->
+        <div class="relative">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-sky-500 to-orange-500 flex items-center justify-center shadow-lg">
+            <i class="fas fa-user text-white text-sm"></i>
+          </div>
+          <!-- Online indicator -->
+          <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-slate-900 rounded-full"></div>
+        </div>
+        
+        <div class="flex-1 overflow-hidden transition-all duration-300 {isSidebarHidden ? 'w-0 opacity-0' : 'w-auto opacity-100'}">
+          <p class="text-sm font-semibold text-white truncate">Administrator</p>
+          <p class="text-xs text-slate-400 truncate">admin@houseo.com</p>
+        </div>
+      </div>
+    </div>
   </div>
-<!-- Clicking calls toggleSidebar() to open/close the panel.-->
 
-  <a href="/" class="logo">
-    <i class="fas fa-user-cog logo-icon"></i>
-    <span class="logo-text">Admin Dashboard</span> <!-- Icon + text, linking back to the main admin page. -->
-  </a>
-
-  <!-- We loop over menuItems and build one <li> per entry. -->
-
-  <ul class="side-menu"> <!-- Unordered List, will contain all the clickable menu links (as <li> elements).-->
-    {#each menuItems as item (item.idx)}
-<!-- item is the current object in the array for each loop cycle,(item.idx) is used as a unique key so Svelte knows which item is which-->
-      <li class="menu-item" class:active={activeIndex === item.idx}>
-        <div class="active-indicator"></div>
-        <a  href={item.href}  class="nav-link"  on:click={() => setActive(item.idx)}>
-          <i class="fas fa-{item.icon}"></i>  <!-- This adds the Font Awesome icon for the item. -->
-          <span class="link-text">{item.text}</span> <!--This shows the visible text for each menu item.-->
-        </a>
-      </li>
-    {/each}
-  </ul>
-</nav>
+  <!-- Tooltip for collapsed state -->
+  {#if isSidebarHidden}
+    <div class="fixed left-20 top-20 pointer-events-none z-50">
+      <!-- Tooltips would appear here when hovering over collapsed menu items -->
+    </div>
+  {/if}
+</aside>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-  /* Sidebar-specific CSS variables - scoped to avoid conflicts */
-  .sidebar {
-    --sidebar-bg: #1a2236;
-    --sidebar-active: #0ea5e9;
-    --sidebar-hover: rgba(14, 165, 233, 0.15);
-    --sidebar-text-primary: #f3f4f6;
-    --sidebar-text-secondary: #9ca3af;
-    --transition-speed: 0.3s;
-    --border-radius: 8px;
-    --icon-size: 1.25rem;
-  }
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 260px;
-    background: var(--sidebar-bg);
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    transition: width var(--transition-speed) ease;
-    overflow: hidden;
-    z-index: 100;
-    font-family: 'Poppins', sans-serif;
-  }
-  .sidebar.hide {
-    width: 72px;
-  }
-  .toggle-container {
-    display: flex;
-    justify-content: flex-end;
-    padding: 24px 20px 16px;
-  }
-  .toggle-btn {
-    background: transparent;
-    border: none;
-    color: var(--sidebar-text-primary);
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-size: var(--icon-size);
-    transition: transform var(--transition-speed), color 0.2s ease;
-  }
-  .toggle-btn:hover {
-    color: var(--sidebar-text-primary);
-    background: rgba(255, 255, 255, 0.05);
-  }
-  .sidebar.hide .toggle-btn {
-    transform: rotate(180deg);
-  }
-  .logo {
-    display: flex;
-    align-items: center;
-    padding: 0 20px 28px;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    margin-bottom: 12px;
-    color: var(--sidebar-text-primary);
-  }
-  .logo-icon {
-    font-size: 22px;
-    color: var(--sidebar-active);
-    margin-right: 12px;
-  }
-  .logo-text {
-    font-weight: 600;
-    font-size: 19px;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-    transition: opacity var(--transition-speed);
-  }
-  .sidebar.hide .logo-text {
-    opacity: 0;
-    width: 0;
-    overflow: hidden;
-  }
-  .side-menu {
-    padding: 0 12px;
-    list-style: none;
-    margin: 0;
-    flex-grow: 1;
-  }
-  .menu-item {
-    position: relative;
-    margin-bottom: 8px;
-    height: 50px;
-    border-radius: var(--border-radius);
-    transition: background var(--transition-speed);
-  }
-  .menu-item.active {
-    background: var(--sidebar-hover);
-  }
-  .nav-link {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding: 0 12px;
-    color: var(--sidebar-text-primary);
-    text-decoration: none;
-    border-radius: var(--border-radius);
-    transition: color 0.2s ease, background var(--transition-speed);
-  }
-  .nav-link:hover {
-    color: var(--sidebar-text-primary);
-    background: rgba(255, 255, 255, 0.03);
-  }
-  .menu-item.active .nav-link {
-    color: var(--sidebar-text-primary);
-  }
-  .nav-link i {
-    min-width: 32px;
-    font-size: var(--icon-size);
-    transition: color var(--transition-speed);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--sidebar-text-primary);
-  }
-  .menu-item.active .nav-link i {
-    color: var(--sidebar-active);
-  }
-  .link-text {
-    font-weight: 500;
-    font-size: 15px;
-    transition: opacity var(--transition-speed), transform var(--transition-speed);
-  }
-  .sidebar.hide .link-text {
-    opacity: 0;
-    width: 0;
-    overflow: hidden;
-  }
-  .active-indicator {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 60%;
+  /* Custom scrollbar styles */
+  .scrollbar-thin::-webkit-scrollbar {
     width: 4px;
-    background: var(--sidebar-active);
-    border-radius: 0 4px 4px 0;
-    opacity: 0;
-    transition: opacity var(--transition-speed);
   }
-  .menu-item.active .active-indicator {
-    opacity: 1;
+  
+  .scrollbar-track-transparent::-webkit-scrollbar-track {
+    background: transparent;
   }
-  .user-info {
-    padding: 16px;
-    color: var(--sidebar-text-primary);
-    font-size: 14px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  
+  .scrollbar-thumb-white\/10::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+  
+  .scrollbar-thumb-white\/10:hover::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
   }
 </style>

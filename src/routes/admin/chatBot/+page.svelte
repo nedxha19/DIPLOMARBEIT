@@ -174,55 +174,69 @@
   }
 </script>
 
-<div class="chat-app">
+<!-- Modern AI Chat Interface with Tailwind CSS -->
+<div class="flex h-screen bg-white">
   <!-- Sidebar -->
-  <aside class="sidebar" class:hidden={!showSidebar}>
-    <header class="sidebar-header">
-      <h2><i class="fas fa-comments"></i> Conversations</h2>
-      <button class="btn-icon" on:click={newChat} aria-label="New chat">
+  <aside class="w-80 bg-white border-r border-gray-200 flex flex-col transition-all duration-300 {showSidebar ? 'translate-x-0' : '-translate-x-full'} fixed lg:relative z-40">
+    <header class="flex justify-between items-center p-6 bg-gradient-to-r from-sky-600 to-orange-600 text-white">
+      <h2 class="flex items-center gap-2 text-lg font-bold">
+        <i class="fas fa-comments"></i>
+        Conversations
+      </h2>
+      <button 
+        class="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-xl border border-white/20 hover:border-white transition-all hover:scale-110"
+        on:click={newChat}
+        aria-label="New chat"
+      >
         <i class="fas fa-plus"></i>
       </button>
     </header>
     
-    <div class="search-box">
-      <i class="fas fa-search"></i>
+    <div class="relative p-4 border-b border-gray-200">
+      <i class="fas fa-search absolute left-7 top-1/2 -translate-y-1/2 text-gray-400"></i>
       <input 
         type="search" 
         placeholder="Search conversations..." 
         bind:value={searchQuery}
+        autocomplete="off"
         aria-label="Search"
+        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
       />
     </div>
     
-    <div class="sessions">
+    <div class="flex-1 overflow-y-auto p-2 custom-scrollbar">
       {#if filteredSessions.length === 0}
-        <div class="empty">
-          <i class="fas fa-history"></i>
-          <p>No conversations yet</p>
-          <button class="btn-primary" on:click={newChat}>Start New Chat</button>
+        <div class="text-center py-12 px-4 text-gray-500">
+          <i class="fas fa-history text-5xl mb-4 opacity-50"></i>
+          <p class="text-sm mb-6">No conversations yet</p>
+          <button 
+            class="px-6 py-3 bg-gradient-to-r from-sky-600 to-orange-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105"
+            on:click={newChat}
+          >
+            Start New Chat
+          </button>
         </div>
       {:else}
         {#each filteredSessions as session}
           <div 
-            class="session"
-            class:active={session.id === data.sessionId}
+            class="flex items-center gap-3 p-3 mb-1 rounded-xl cursor-pointer transition-all border border-transparent hover:bg-sky-50 hover:border-sky-200 {session.id === data.sessionId ? 'bg-gradient-to-r from-sky-600 to-orange-600 text-white' : ''}"
             on:click={() => switchSession(session.id)}
             on:keydown={(e) => e.key === 'Enter' && switchSession(session.id)}
             tabindex="0"
             role="button"
           >
-            <div class="session-info">
-              <span class="session-title">
+            <div class="flex-1 min-w-0">
+              <span class="block text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap mb-1 {session.id === data.sessionId ? 'text-white' : 'text-gray-800'}">
                 {session.first_message?.substring(0, 50) || 'New conversation'}
                 {#if session.first_message?.length > 50}...{/if}
               </span>
-              <span class="session-meta">
-                <i class="fas fa-message"></i> {session.message_count || 0} · 
-                {formatTime(session.created_at)}
+              <span class="flex items-center gap-1 text-xs {session.id === data.sessionId ? 'text-white/80' : 'text-gray-500'}">
+                <i class="fas fa-message"></i>
+                {session.message_count || 0} · {formatTime(session.created_at)}
               </span>
             </div>
             <button 
-              class="btn-delete"
+              class="opacity-0 group-hover:opacity-100 w-8 h-8 flex items-center justify-center bg-transparent hover:bg-red-100 border border-transparent hover:border-red-300 text-red-500 rounded-lg transition-all hover:scale-110"
               on:click={(e) => deleteSession(session.id, e)}
               aria-label="Delete"
             >
@@ -234,28 +248,40 @@
     </div>
   </aside>
   
-  <!-- Main -->
-  <main class="main">
+  <!-- Main Chat Area -->
+  <main class="flex-1 flex flex-col bg-gradient-to-br from-gray-50 to-white">
     <!-- Topbar -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="btn-icon" on:click={() => showSidebar = !showSidebar} aria-label="Toggle sidebar">
+    <header class="flex justify-between items-center p-4 sm:p-6 bg-white border-b border-gray-200 shadow-sm">
+      <div class="flex items-center gap-4">
+        <button 
+          class="lg:hidden w-10 h-10 flex items-center justify-center border border-gray-300 rounded-xl text-gray-600 hover:bg-gray-50 hover:border-sky-500 hover:text-sky-600 transition-all"
+          on:click={() => showSidebar = !showSidebar}
+          aria-label="Toggle sidebar"
+        >
           <i class="fas fa-bars"></i>
         </button>
-        <div class="title">
-          <h1>AI Assistant</h1>
-          <span class="status" class:loading>
-            <i class="fas fa-circle"></i>
+        <div>
+          <h1 class="text-xl font-bold text-gray-800">AI Assistant</h1>
+          <span class="flex items-center gap-1 text-xs {loading ? 'text-yellow-600' : 'text-green-600'} font-medium">
+            <i class="fas fa-circle {loading ? 'animate-pulse' : ''}"></i>
             {loading ? 'Thinking...' : 'Online'}
           </span>
         </div>
       </div>
       
-      <div class="topbar-right">
-        <button class="btn-icon" on:click={() => showQuickActions = !showQuickActions} aria-label="Quick actions">
+      <div class="flex items-center gap-3">
+        <button 
+          class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-xl text-gray-600 hover:bg-sky-50 hover:border-sky-500 hover:text-sky-600 transition-all hover:scale-110"
+          on:click={() => showQuickActions = !showQuickActions}
+          aria-label="Quick actions"
+        >
           <i class="fas fa-bolt"></i>
         </button>
-        <button class="btn-icon" on:click={exportChat} aria-label="Export chat">
+        <button 
+          class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-xl text-gray-600 hover:bg-orange-50 hover:border-orange-500 hover:text-orange-600 transition-all hover:scale-110"
+          on:click={exportChat}
+          aria-label="Export chat"
+        >
           <i class="fas fa-download"></i>
         </button>
       </div>
@@ -263,18 +289,28 @@
     
     <!-- Quick Actions -->
     {#if showQuickActions}
-      <section class="quick-actions">
-        <div class="quick-header">
-          <span><i class="fas fa-bolt"></i> Quick Actions</span>
-          <button class="btn-icon-sm" on:click={() => showQuickActions = false} aria-label="Close">
-            <i class="fas fa-times"></i>
+      <section class="bg-sky-50 border-b border-sky-200 p-4 sm:p-6 animate-slide-down">
+        <div class="flex justify-between items-center mb-4">
+          <span class="flex items-center gap-2 font-semibold text-gray-800">
+            <i class="fas fa-bolt text-sky-600"></i>
+            Quick Actions
+          </span>
+          <button 
+            class="w-8 h-8 flex items-center justify-center bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition-all"
+            on:click={() => showQuickActions = false}
+            aria-label="Close"
+          >
+            <i class="fas fa-times text-gray-600"></i>
           </button>
         </div>
-        <div class="quick-grid">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {#each quickActions as action}
-            <button class="quick-btn" on:click={() => useQuickAction(action)}>
-              <i class="fas fa-{action.icon}"></i>
-              <span>{action.title}</span>
+            <button 
+              class="flex flex-col items-center gap-2 p-4 bg-white border border-gray-200 rounded-xl cursor-pointer transition-all hover:bg-gradient-to-br hover:from-sky-600 hover:to-orange-600 hover:text-white hover:border-transparent hover:-translate-y-1 hover:shadow-lg group"
+              on:click={() => useQuickAction(action)}
+            >
+              <i class="fas fa-{action.icon} text-2xl text-sky-600 group-hover:text-white transition-colors"></i>
+              <span class="text-xs font-medium text-gray-800 group-hover:text-white transition-colors text-center">{action.title}</span>
             </button>
           {/each}
         </div>
@@ -282,25 +318,31 @@
     {/if}
     
     <!-- Messages -->
-    <div class="messages" bind:this={chatContainer}>
+    <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar" bind:this={chatContainer}>
       {#each messages as msg (msg.id)}
-        <div class="message {msg.role}">
-          <div class="avatar">
+        <div class="flex gap-3 max-w-4xl animate-fade-in {msg.role === 'user' ? 'ml-auto flex-row-reverse' : ''}">
+          <div class="w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center {msg.role === 'user' ? 'bg-gray-800' : 'bg-gradient-to-br from-sky-600 to-orange-600'} text-white shadow-lg">
             <i class="fas fa-{msg.role === 'user' ? 'user' : 'robot'}"></i>
           </div>
-          <div class="bubble">
+          <div class="flex-1 {msg.role === 'user' ? 'max-w-2xl' : 'max-w-3xl'} p-4 rounded-2xl border shadow-sm relative {msg.role === 'user' ? 'bg-gradient-to-br from-sky-600 to-orange-600 text-white border-transparent' : 'bg-white border-gray-200'}">
             {#if msg.isTyping}
-              <div class="typing">
-                <span></span><span></span><span></span>
+              <div class="flex gap-1 p-2">
+                <span class="w-2 h-2 bg-sky-500 rounded-full animate-typing"></span>
+                <span class="w-2 h-2 bg-sky-500 rounded-full animate-typing animation-delay-200"></span>
+                <span class="w-2 h-2 bg-sky-500 rounded-full animate-typing animation-delay-400"></span>
               </div>
             {:else}
-              <div class="bubble-header">
-                <strong>{msg.role === 'user' ? 'You' : 'AI Assistant'}</strong>
+              <div class="flex justify-between items-center mb-2 text-xs {msg.role === 'user' ? 'text-white/80' : 'text-gray-500'}">
+                <strong class="{msg.role === 'user' ? 'text-white' : 'text-gray-800'}">{msg.role === 'user' ? 'You' : 'AI Assistant'}</strong>
                 <time>{formatTime(msg.time)}</time>
               </div>
-              <p class="text">{msg.text}</p>
+              <p class="text-sm leading-relaxed whitespace-pre-wrap {msg.role === 'user' ? 'text-white' : 'text-gray-800'}">{msg.text}</p>
               {#if msg.role === 'bot'}
-                <button class="btn-copy" on:click={() => copyMessage(msg.text)} aria-label="Copy">
+                <button 
+                  class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-sky-50 text-sky-600 border border-transparent rounded-lg opacity-0 group-hover:opacity-100 hover:bg-sky-600 hover:text-white transition-all"
+                  on:click={() => copyMessage(msg.text)}
+                  aria-label="Copy"
+                >
                   <i class="fas fa-copy"></i>
                 </button>
               {/if}
@@ -310,9 +352,9 @@
       {/each}
     </div>
     
-    <!-- Input -->
-    <footer class="input-bar">
-      <form method="POST" action="?/chat" use:enhance={handleSubmit}>
+    <!-- Input Bar -->
+    <footer class="p-4 sm:p-6 bg-white border-t border-gray-200">
+      <form method="POST" action="?/chat" use:enhance={handleSubmit} class="flex gap-3 items-end max-w-4xl mx-auto">
         <textarea
           bind:value={input}
           on:keydown={handleKeydown}
@@ -320,714 +362,93 @@
           rows="1"
           disabled={loading}
           aria-label="Message input"
+          autocomplete="off"
+          class="flex-1 min-h-[48px] max-h-[150px] px-4 py-3 border-2 border-gray-300 rounded-xl text-sm resize-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
         ></textarea>
-        <button type="submit" class="btn-send" disabled={!input.trim() || loading}>
+        <button 
+          type="submit" 
+          class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-600 to-orange-600 text-white font-semibold rounded-xl shadow-md hover:shadow-xl transition-all hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 disabled:scale-100"
+          disabled={!input.trim() || loading}
+        >
           {#if loading}
             <i class="fas fa-spinner fa-spin"></i>
           {:else}
             <i class="fas fa-paper-plane"></i>
           {/if}
-          <span>Send</span>
+          <span class="hidden sm:inline">Send</span>
         </button>
       </form>
     </footer>
   </main>
 </div>
 
-<!-- Toast -->
+<!-- Toast Notification -->
 {#if showToast}
-  <div class="toast">
-    <i class="fas fa-check-circle"></i>
+  <div class="fixed bottom-6 right-6 flex items-center gap-3 px-6 py-4 bg-green-500 text-white font-medium rounded-xl shadow-2xl z-50 animate-toast-in">
+    <i class="fas fa-check-circle text-xl"></i>
     {toastMessage}
   </div>
 {/if}
 
 <style>
-  /* ============================================
-     CHATBOT - USES DESIGN SYSTEM ONLY
-     No hardcoded values, no conflicts
-     ============================================ */
-  
-  .chat-app {
-    display: flex;
-    height: 100vh;
-    background: var(--bg-secondary);
-    font-family: var(--font-family-sans);
-    color: var(--text-primary);
-  }
-  
-  /* ============================================
-     SIDEBAR
-     ============================================ */
-  .sidebar {
-    width: var(--sidebar-width);
-    background: var(--bg-secondary);
-    border-right: 1px solid var(--border-light);
-    display: flex;
-    flex-direction: column;
-    transition: var(--transition-normal);
-  }
-  
-  .sidebar.hidden {
-    margin-left: calc(-1 * var(--sidebar-width));
-  }
-  
-  .sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-6);
-    background: var(--gradient-header);
-    color: var(--text-white);
-  }
-  
-  .sidebar-header h2 {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-semibold);
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-  
-  .sidebar-header h2 i {
-    color: var(--text-white);
-  }
-  
-  .sidebar-header .btn-icon {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: var(--text-white);
-  }
-  
-  .sidebar-header .btn-icon:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: var(--text-white);
-    color: var(--text-white);
-  }
-  
-  .search-box {
-    position: relative;
-    padding: var(--space-4);
-    border-bottom: 1px solid var(--border-light);
-  }
-  
-  .search-box i {
-    position: absolute;
-    left: var(--space-6);
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-  }
-  
-  .search-box input {
-    width: 100%;
-    padding: var(--space-2-5) var(--space-10);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-xl);
-    font-size: var(--font-size-sm);
-    outline: none;
-    transition: var(--transition-fast);
-  }
-  
-  .search-box input:focus {
-    border-color: var(--border-focus);
-    box-shadow: var(--shadow-outline);
-  }
-  
-  .search-box input::placeholder {
-    color: var(--text-placeholder);
-  }
-  
-  .sessions {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--space-2);
-  }
-  
-  .session {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    margin-bottom: var(--space-1);
-    border-radius: var(--radius-xl);
-    cursor: pointer;
-    transition: var(--transition-fast);
-    border: 1px solid transparent;
-  }
-  
-  .session:hover {
-    background: var(--bg-accent);
-    border-color: var(--border-light);
-  }
-  
-  .session.active {
-    background: var(--gradient-primary);
-    color: var(--text-white);
-  }
-  
-  .session-info {
-    flex: 1;
-    min-width: 0;
-  }
-  
-  .session-title {
-    display: block;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-bottom: var(--space-1);
-    color: var(--text-primary);
-  }
-  
-  .session.active .session-title {
-    color: var(--text-white);
-  }
-  
-  .session-meta {
-    font-size: var(--font-size-xs);
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-  }
-  
-  .session-meta i {
-    color: var(--text-secondary);
-  }
-  
-  .session.active .session-meta {
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .session.active .session-meta i {
-    color: rgba(255, 255, 255, 0.9);
-  }
-  
-  .btn-delete {
-    opacity: 0;
-    width: var(--space-8);
-    height: var(--space-8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    color: var(--error-color);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    transition: var(--transition-fast);
-  }
-  
-  .session:hover .btn-delete {
-    opacity: 1;
-  }
-  
-  .btn-delete:hover {
-    background: var(--error-light);
-    transform: scale(1.1);
-  }
-  
-  .empty {
-    text-align: center;
-    padding: var(--space-12) var(--space-4);
-    color: var(--text-muted);
-  }
-  
-  .empty i {
-    font-size: var(--font-size-4xl);
-    margin-bottom: var(--space-4);
-    opacity: 0.5;
-    color: var(--text-muted);
-  }
-  
-  .empty p {
-    margin-bottom: var(--space-6);
-    font-size: var(--font-size-sm);
-    color: var(--text-secondary);
-  }
-  
-  /* ============================================
-     MAIN AREA
-     ============================================ */
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-primary);
-  }
-  
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-4) var(--space-6);
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-light);
-    box-shadow: var(--shadow-sm);
-  }
-  
-  .topbar-left, .topbar-right {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
-  
-  .title h1 {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-semibold);
-    margin: 0;
-    color: var(--text-primary);
-  }
-  
-  .status {
-    font-size: var(--font-size-xs);
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-  }
-  
-  .status i {
-    color: var(--success-color);
-  }
-  
-  .status.loading i {
-    color: var(--warning-color);
-    animation: pulse 1.5s infinite;
-  }
-  
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-  
-  .btn-icon, .btn-icon-sm {
-    width: var(--button-height);
-    height: var(--button-height);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-xl);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: var(--transition-fast);
-  }
-  
-  .btn-icon-sm {
-    width: var(--space-8);
-    height: var(--space-8);
-  }
-  
-  .btn-icon:hover, .btn-icon-sm:hover {
-    background: var(--bg-accent);
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    transform: translateY(-1px);
-  }
-  
-  .btn-icon i,
-  .btn-icon-sm i {
-    color: inherit;
-  }
-  
-  /* ============================================
-     QUICK ACTIONS
-     ============================================ */
-  .quick-actions {
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-light);
-    padding: var(--space-4) var(--space-6);
-    animation: slideDown var(--duration-300) var(--timing-ease);
-  }
-  
-  @keyframes slideDown {
+  @keyframes slide-down {
     from { transform: translateY(-100%); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
   }
   
-  .quick-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-4);
+  .animate-slide-down {
+    animation: slide-down 0.3s ease-out;
   }
-  
-  .quick-header span {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    color: var(--text-primary);
-  }
-  
-  .quick-header span i {
-    color: var(--accent-color);
-  }
-  
-  .quick-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--space-3);
-  }
-  
-  .quick-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-4);
-    background: var(--bg-accent);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-xl);
-    cursor: pointer;
-    transition: var(--transition-fast);
-  }
-  
-  .quick-btn:hover {
-    background: var(--gradient-button);
-    color: var(--text-white);
-    border-color: transparent;
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
-  
-  .quick-btn i {
-    font-size: var(--font-size-xl);
-    color: var(--accent-color);
-  }
-  
-  .quick-btn:hover i {
-    color: var(--text-white);
-  }
-  
-  .quick-btn span {
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-medium);
-    color: var(--text-primary);
-  }
-  
-  .quick-btn:hover span {
-    color: var(--text-white);
-  }
-  
-  /* ============================================
-     MESSAGES
-     ============================================ */
-  .messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
-  
-  .message {
-    display: flex;
-    gap: var(--space-3);
-    max-width: 70%;
-    animation: fadeIn var(--duration-300) var(--timing-ease);
-  }
-  
-  @keyframes fadeIn {
+
+  @keyframes fade-in {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
   
-  .message.user {
-    align-self: flex-end;
-    flex-direction: row-reverse;
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
   }
-  
-  .avatar {
-    width: var(--space-10);
-    height: var(--space-10);
-    border-radius: var(--radius-full);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-dark);
-    color: var(--text-white);
-    flex-shrink: 0;
-  }
-  
-  .avatar i {
-    color: var(--text-white);
-  }
-  
-  .message.bot .avatar {
-    background: var(--accent-color);
-  }
-  
-  .message.bot .avatar i {
-    color: var(--text-white);
-  }
-  
-  .bubble {
-    flex: 1;
-    padding: var(--space-4);
-    border-radius: var(--radius-2xl);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-light);
-    box-shadow: var(--shadow-sm);
-    position: relative;
-  }
-  
-  .message.user .bubble {
-    background: var(--gradient-primary);
-    color: var(--text-white);
-    border: none;
-  }
-  
-  .bubble-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-2);
-    font-size: var(--font-size-xs);
-    color: var(--text-secondary);
-  }
-  
-  .bubble-header strong {
-    color: var(--text-primary);
-  }
-  
-  .bubble-header time {
-    color: var(--text-muted);
-  }
-  
-  .message.user .bubble-header {
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .message.user .bubble-header strong,
-  .message.user .bubble-header time {
-    color: rgba(255, 255, 255, 0.9);
-  }
-  
-  .text {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-relaxed);
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    color: var(--text-primary);
-  }
-  
-  .message.user .text {
-    color: var(--text-white);
-  }
-  
-  .btn-copy {
-    position: absolute;
-    top: var(--space-2);
-    right: var(--space-2);
-    width: var(--space-8);
-    height: var(--space-8);
-    background: var(--bg-accent);
-    border: none;
-    border-radius: var(--radius-lg);
-    color: var(--text-secondary);
-    cursor: pointer;
-    opacity: 0;
-    transition: var(--transition-fast);
-  }
-  
-  .bubble:hover .btn-copy {
-    opacity: 1;
-  }
-  
-  .btn-copy:hover {
-    background: var(--accent-color);
-    color: var(--text-white);
-  }
-  
-  .btn-copy i {
-    color: inherit;
-  }
-  
-  .typing {
-    display: flex;
-    gap: var(--space-1);
-    padding: var(--space-2);
-  }
-  
-  .typing span {
-    width: 8px;
-    height: 8px;
-    background: var(--accent-color);
-    border-radius: var(--radius-full);
-    animation: bounce 1.4s infinite ease-in-out;
-  }
-  
-  .typing span:nth-child(2) { animation-delay: 0.2s; }
-  .typing span:nth-child(3) { animation-delay: 0.4s; }
-  
-  @keyframes bounce {
+
+  @keyframes typing {
     0%, 80%, 100% { transform: scale(0); }
     40% { transform: scale(1); }
   }
   
-  /* ============================================
-     INPUT BAR
-     ============================================ */
-  .input-bar {
-    padding: var(--space-4) var(--space-6);
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--border-light);
+  .animate-typing {
+    animation: typing 1.4s infinite ease-in-out;
   }
-  
-  .input-bar form {
-    display: flex;
-    gap: var(--space-3);
-    align-items: flex-end;
+
+  .animation-delay-200 {
+    animation-delay: 0.2s;
   }
-  
-  textarea {
-    flex: 1;
-    min-height: var(--input-height);
-    max-height: 150px;
-    padding: var(--space-3);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-xl);
-    font-family: var(--font-family-sans);
-    font-size: var(--font-size-sm);
-    resize: vertical;
-    outline: none;
-    transition: var(--transition-fast);
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
   }
-  
-  textarea:focus {
-    border-color: var(--border-focus);
-    box-shadow: var(--shadow-outline);
-  }
-  
-  textarea:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  textarea::placeholder {
-    color: var(--text-placeholder);
-  }
-  
-  .btn-send, .btn-primary {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-6);
-    background: var(--gradient-button);
-    color: var(--text-white);
-    border: none;
-    border-radius: var(--radius-xl);
-    font-weight: var(--font-weight-semibold);
-    cursor: pointer;
-    transition: var(--transition-fast);
-    box-shadow: var(--shadow-sm);
-  }
-  
-  .btn-send:hover:not(:disabled), .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
-  
-  .btn-send:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  .btn-send i,
-  .btn-primary i,
-  .btn-send span,
-  .btn-primary span {
-    color: var(--text-white);
-  }
-  
-  /* ============================================
-     TOAST
-     ============================================ */
-  .toast {
-    position: fixed;
-    bottom: var(--space-6);
-    right: var(--space-6);
-    background: var(--success-color);
-    color: var(--text-white);
-    padding: var(--space-4) var(--space-6);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    font-weight: var(--font-weight-medium);
-    animation: toastIn var(--duration-300) var(--timing-ease);
-    z-index: var(--z-index-toast);
-  }
-  
-  .toast i {
-    color: var(--text-white);
-    font-size: var(--font-size-lg);
-  }
-  
-  @keyframes toastIn {
+
+  @keyframes toast-in {
     from { transform: translateY(100px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
   }
   
-  /* ============================================
-     RESPONSIVE
-     ============================================ */
-  @media (max-width: 768px) {
-    .sidebar {
-      position: absolute;
-      height: 100%;
-      z-index: var(--z-index-fixed);
-      box-shadow: var(--shadow-2xl);
-    }
-    
-    .sidebar.hidden {
-      margin-left: 0;
-      transform: translateX(-100%);
-    }
-    
-    .message {
-      max-width: 90%;
-    }
-    
-    .btn-send span {
-      display: none;
-    }
-    
-    .quick-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .animate-toast-in {
+    animation: toast-in 0.3s ease-out;
   }
-  
-  /* ============================================
-     SCROLLBAR
-     ============================================ */
-  .sessions::-webkit-scrollbar,
-  .messages::-webkit-scrollbar {
+
+  .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
   
-  .sessions::-webkit-scrollbar-track,
-  .messages::-webkit-scrollbar-track {
+  .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
   
-  .sessions::-webkit-scrollbar-thumb,
-  .messages::-webkit-scrollbar-thumb {
-    background: var(--border-medium);
-    border-radius: var(--radius-full);
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
   }
-  
-  .sessions::-webkit-scrollbar-thumb:hover,
-  .messages::-webkit-scrollbar-thumb:hover {
-    background: var(--border-dark);
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 </style>

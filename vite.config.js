@@ -4,8 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	css: {
-		devSourcemap: true,
-		postcss: {},
+		devSourcemap: true
 	},
 	build: {
 		cssCodeSplit: false,

@@ -2,9 +2,7 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { page } from '$app/stores';
-
-	// Import centralized design system
-	import '$lib/styles/design-system.css';
+	import '../app.css';
 
 	// Check if the current route is an admin route
 	$: isAdminRoute = $page.url.pathname.startsWith('/admin');
@@ -14,7 +12,7 @@
 	<Navbar />
 {/if}
 
-<main class="main">
+<main class="w-full min-h-screen bg-white flex-1">
 	<slot />
 </main>
 
@@ -23,39 +21,27 @@
 {/if}
 
 <style>
-	
-	* {
+	:global(html),
+	:global(body) {
 		margin: 0;
 		padding: 0;
+		min-height: 100%;
+		font-family:
+			'Montserrat',
+			'Inter',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			sans-serif;
+	}
+
+	:global(body) {
+		display: flex;
+		flex-direction: column;
+	}
+
+	:global(*) {
 		box-sizing: border-box;
-	}
-
-	:global(html), :global(body) {
-		margin: 0;
-		padding: 0;
-		height: 100%;
-		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-	}
-
-	/* ========================================
-	   ROOT LAYOUT STYLES
-	   Uses centralized design system from design-system.css
-	======================================== */
-
-	/* Main layout container */
-	main.main {
-		margin: 0;
-		padding: 0;
-		width: 100%;
-		height: 100%;
-		background: var(--bg-primary);
-	}
-
-	/* Mobile responsiveness */
-	@media (max-width: 480px) {
-		main.main {
-			margin: 0;
-			padding: 0;
-		}
 	}
 </style>
