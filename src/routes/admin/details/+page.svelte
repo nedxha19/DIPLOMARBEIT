@@ -63,7 +63,6 @@
   }
 </script>
 
-<!-- Modern Property Details Management Dashboard -->
 <div class="min-h-screen">
   <AdminHeader 
     title="Property Details Management"
@@ -75,7 +74,6 @@
     ]}
   />
 
-  <!-- Property Selection Section -->
   <div 
     class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden"
     in:fly={{ y: -20, duration: 600, delay: 100, easing: quintOut }}
@@ -463,7 +461,7 @@
             </div>
           </section>
 
-          <!-- What's Nearby - Simplified -->
+     
           <section class="border-b border-gray-200 pb-6">
             <div class="flex items-start gap-3 mb-4">
               <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
