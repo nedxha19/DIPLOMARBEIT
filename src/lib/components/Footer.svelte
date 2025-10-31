@@ -30,7 +30,7 @@
 		{
 			title: 'Company',
 			links: [
-				{ href: '/post', label: 'Blog' },
+				{ href: '/blog', label: 'Blog' },
 				{ href: '/contact', label: 'Contact Us' },
 				{ href: '/', label: 'About' },
 				{ href: '/', label: 'Careers', badge: 'Hiring' }
