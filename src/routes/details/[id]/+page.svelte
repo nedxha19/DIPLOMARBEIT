@@ -405,7 +405,7 @@ Price: {formatPrice(property.price)}
   }
 
   .details-columns li strong {
-    color: #667eea;
+    color: #0f172a;
     font-weight: 600;
   }
 
@@ -436,7 +436,7 @@ Price: {formatPrice(property.price)}
 
   .nearby-columns h3 {
     font-size: 1.3rem;
-    color: #667eea;
+    color: #0f172a;
     margin-bottom: 15px;
     font-weight: 600;
   }
@@ -494,7 +494,7 @@ Price: {formatPrice(property.price)}
   .property-price-large .price {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #667eea;
+    color: #0f172a;
   }
 
   .property-price-large .location {
@@ -524,27 +524,27 @@ Price: {formatPrice(property.price)}
   }
 
   .btn-primary {
-    background: #667eea;
+    background: #0f172a;
     color: white;
   }
 
   .btn-primary:hover {
-    background: #5a67d8;
+    background: #1e293b;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
   }
 
   .btn-secondary {
     background: #f8f9fa;
-    color: #667eea;
-    border: 2px solid #667eea;
+    color: #0f172a;
+    border: 2px solid #0f172a;
   }
 
   .btn-secondary:hover {
-    background: #667eea;
+    background: #0f172a;
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
   }
 
   /* Modal Styles */
@@ -629,7 +629,7 @@ Price: {formatPrice(property.price)}
   .form-group input:focus,
   .form-group textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #0f172a;
   }
 
   .form-group textarea {

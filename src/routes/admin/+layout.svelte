@@ -1,21 +1,37 @@
 <script>
   import AdminSidebar from '$lib/components/AdminSidebar.svelte';
+  import LoadingScreen from '$lib/components/LoadingScreen.svelte';
   import { writable } from 'svelte/store';
   import { page } from '$app/stores';
+  import { onMount } from 'svelte';
   
   export const isSidebarHidden = writable(false);
+  
+  let showLoading = true;
   
   // Check if the current route is an auth page
   $: isAuthPage = $page.url.pathname === '/admin/login' || $page.url.pathname === '/admin/register';
   $: isFullWidthPage = $page.url.pathname === '/admin/calendarSchedule' || $page.url.pathname === '/admin/chatBot';
+  
+  onMount(() => {
+    // Hide loading screen after initial load
+    setTimeout(() => {
+      showLoading = false;
+    }, 1800);
+  });
 </script>
 
 {#if isAuthPage}
   <!-- Auth pages (login/register) - Full screen without sidebar -->
   <slot />
 {:else}
+  <!-- Loading Screen -->
+  {#if showLoading}
+    <LoadingScreen bind:show={showLoading} />
+  {/if}
+  
   <!-- Main admin layout with sidebar -->
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+  <div class="min-h-screen bg-gray-50">
     <AdminSidebar bind:isSidebarHidden={$isSidebarHidden} />
     
     <!-- Main content area - Professional spacing -->

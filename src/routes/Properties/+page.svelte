@@ -1,479 +1,580 @@
 <script>
+  import { fly, fade, scale } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
+  
   export let data;
-</script>
-
-<!-- svelte-ignore css_unused_selector -->
-<style>
-:root {
-  --primary-color: #3081B4;
-  --accent-color: #ECAE4D;
-  --body-bg: #F5F1F1;
-  --mobile-nav-bg: #2c3e50;
-  --white: white;
-  --blue: #007BFF;
-  --spacing-sm: 10px;
-  --spacing-md: 15px;
-  --spacing-lg: 20px;
-  --spacing-xl: 80px;
-  --font-size-logo: 28px;
-  --font-size-nav: 17px;
-  --font-size-nav-mobile: 20px;
-  --font-size-h1: 40px;
-  --font-size-h2: 20px;
-  --font-size-p: 16px;
-  --border-radius-sm: 5px;
-  --border-radius-md: 10px;
-  --border-radius-lg: 15px;
-  --border-radius-xl: 20px;
-  --transition-sm: 0.3s ease;
-  --transition-md: 0.5s ease;
-  --box-shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
-  --box-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
-  position: relative;
-}
-
-body {
-  background-color: var(--body-bg);
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.container {
-  margin-bottom: 0;
-}
-
-.image {
-  width: 100%;
-  margin: 0;
-  height: 450px;
-  position: relative;
-  background-size: cover;
-  background-position: center;
-}
-
-
-.search-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-  width: 90%;
-  max-width: 1200px;
-  padding: calc(var(--spacing-lg) / 1.6);
-  border-radius: var(--border-radius-xl);
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
-  align-items: center;
-  position: absolute;
-  top: 50%; left: 50%; transform: translate(-50%, -50%);
-  transition: transform var(--transition-sm), box-shadow var(--transition-sm);
-}
-
-.search-container:hover {
-  transform: translate(-50%, -50%) translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, .22);
-}
-
-.search-option {
-  flex: 1 1 180px;
-  padding: .65rem .9rem .65rem 1rem;
-  border: 1.5px solid #d0d5dc;
-  border-radius: var(--border-radius-md);
-  font-size: .95rem;
-  background: #fff url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='%233081B4'><path d='M1 1l4 4 4-4'/></svg>") no-repeat right .8rem center/10px 6px;
-  appearance: none;
-  transition: border-color var(--transition-sm), box-shadow var(--transition-sm);
-}
-
-.search-option:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(48, 129, 180, .25);
-}
-
-.vertical-line {
-  width: 1px;
-  height: 36px;
-  background: var(--blue);
-  opacity: .3;
-}
-
-.search-button {
-  flex-shrink: 0;
-  padding: .7rem 1.8rem;
-  font-weight: 600;
-  font-size: .96rem;
-  color: var(--white);
-  background: var(--primary-color);
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: background var(--transition-sm), transform var(--transition-sm);
-}
-
-.search-button:hover {
-  background: #256d96;
-}
-
-.search-button:active {
-  transform: scale(.97);
-}
-
-@media (max-width: 1024px) {
-  .search-container {
-    gap: var(--spacing-md);
-  }
-  .vertical-line {
-    display: none;
-  }
-  .search-option {
-    flex: 1 1 calc(50% - var(--spacing-md));
-  }
-  .search-button {
-    flex: 1 1 100%;
-    margin-top: calc(var(--spacing-md) / 1.2);
-  }
-}
-
-@media (max-width: 600px) {
-  .search-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--spacing-sm);
-    max-width: 400px;
-  }
-  .search-option {
-    width: 100%;
-    flex: 1 1 auto;
-  }
-  .search-button {
-    width: 100%;
-  }
-}
-
-.properties {
-  color: var(--blue);
-  font-size: var(--font-size-h2);
-}
-
-.recommended {
-  font-size: var(--font-size-h1);
-}
-
-.category-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: var(--spacing-lg) 0;
-}
-
-.category-section h2 {
-  margin: var(--spacing-md) 0;
-}
-
-.tabs {
-  display: flex;
-  justify-content: center;
-  margin: var(--spacing-md) 0;
-}
-
-.tab {
-  background-color: var(--accent-color);
-  padding: var(--spacing-md);
-  margin: 0 var(--spacing-lg);
-  border-radius: var(--border-radius-sm);
-  font-size: 14px;
-}
-
-.tab:hover {
-  background-color: #0056b3;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3);
-  color: var(--white);
-}
-
-@media (max-width: 1200px) {
-  .tabs {
-    flex-wrap: wrap;
-    justify-content: space-between;
+  
+  let viewMode = 'grid'; // 'grid' or 'list'
+  let showFilters = true;
+  let savedProperties = [];
+  let compareList = [];
+  let showCompareModal = false;
+  
+  // Filter states
+  let searchQuery = data.currentFilters.search || '';
+  let selectedType = data.currentFilters.type || '';
+  let minPrice = data.currentFilters.minPrice || '';
+  let maxPrice = data.currentFilters.maxPrice || '';
+  let selectedBedrooms = data.currentFilters.bedrooms || '';
+  let selectedBathrooms = data.currentFilters.bathrooms || '';
+  let sortBy = data.currentFilters.sortBy || 'newest';
+  
+  // Price range for slider
+  let priceRangeMin = 0;
+  let priceRangeMax = data.filters.priceRange.maxPrice || 10000000;
+  
+  const sortOptions = [
+    { value: 'newest', label: 'Newest First' },
+    { value: 'price_low', label: 'Price: Low to High' },
+    { value: 'price_high', label: 'Price: High to Low' },
+    { value: 'bedrooms', label: 'Most Bedrooms' }
+  ];
+  
+  function applyFilters() {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set('search', searchQuery);
+    if (selectedType) params.set('type', selectedType);
+    if (minPrice) params.set('minPrice', minPrice);
+    if (maxPrice) params.set('maxPrice', maxPrice);
+    if (selectedBedrooms) params.set('bedrooms', selectedBedrooms);
+    if (selectedBathrooms) params.set('bathrooms', selectedBathrooms);
+    if (sortBy) params.set('sortBy', sortBy);
+    
+    goto(`/Properties?${params.toString()}`);
   }
   
-  .tab {
-    flex: 0 0 40%;
-    margin-bottom: var(--spacing-lg);
+  function clearFilters() {
+    searchQuery = '';
+    selectedType = '';
+    minPrice = '';
+    maxPrice = '';
+    selectedBedrooms = '';
+    selectedBathrooms = '';
+    sortBy = 'newest';
+    goto('/Properties');
   }
-}
-/* Property Cards Section */
-.card-grid-section {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-lg);
-  margin: var(--spacing-lg);
-}
-
-.property-card {
-  background-color: var(--white);
-  border-radius: var(--border-radius-md);
-  overflow: hidden;
-  box-shadow: var(--box-shadow-sm);
-  transition: transform var(--transition-sm);
-  height: 450px;
-}
-
-.property-card:hover {
-  transform: translateY(-5px);
-}
-
-.image-container {
-  width: 100%;
-  height: 50%;
-  overflow: hidden;
-}
-
-.property-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.property-info {
-  padding: var(--spacing-md);
-  height: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background-color: #f8f9fa;
-}
-
-.property-name {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: var(--spacing-sm);
-}
-
-.property-address {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: var(--spacing-md);
-}
-
-.property-stats {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: var(--spacing-sm) 0;
-}
-
-.stat {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: #333;
-}
-
-.stat .icon {
-  font-size: 20px;
-  margin-right: var(--spacing-sm);
-  color: #333;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid #ddd;
-  margin: var(--spacing-sm) 0;
-}
-
-.property-price-type {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.property-price {
-  font-size: 16px;
-  font-weight: bold;
-  color: var(--blue);
-}
-
-.property-type {
-  font-size: 14px;
-  font-style: italic;
-  color: #666;
-}
-
-.property-footer {
-  width: 100%;
-  background-color: var(--accent-color);
-  color: var(--white);
-  text-align: center;
-  padding: var(--spacing-sm) 0;
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
-  margin-bottom: 0;
-}
-
-.details-button {
-  color: white;
-  text-decoration: none;
-  text-align: center;
-}
-
-@media (max-width: 1024px) {
-  .card-grid-section {
-    grid-template-columns: repeat(2, 1fr);
+  
+  function toggleSave(propertyId) {
+    if (savedProperties.includes(propertyId)) {
+      savedProperties = savedProperties.filter(id => id !== propertyId);
+    } else {
+      savedProperties = [...savedProperties, propertyId];
+    }
   }
-}
-
-/* For small screens (mobile phones) */
-@media (max-width: 768px) {
-  .card-grid-section {
-    grid-template-columns: 1fr;
+  
+  function toggleCompare(propertyId) {
+    if (compareList.includes(propertyId)) {
+      compareList = compareList.filter(id => id !== propertyId);
+    } else {
+      if (compareList.length < 3) {
+        compareList = [...compareList, propertyId];
+      }
+    }
   }
-
-  .property-card {
-    width: 100%;
-    margin-bottom: var(--spacing-lg);
+  
+  function formatPrice(price) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0
+    }).format(price);
   }
-
-  .property-image {
-    height: 200px;
+  
+  function staggerDelay(index) {
+    return index * 50;
   }
+  
+  $: hasActiveFilters = searchQuery || selectedType || minPrice || maxPrice || selectedBedrooms || selectedBathrooms;
+  $: compareProperties = data.properties.filter(p => compareList.includes(p.id));
+</script>
 
-  .property-info {
-    padding: var(--spacing-md);
-  }
-}
+<svelte:head>
+  <title>Browse Properties | Houseo - Find Your Perfect Home</title>
+  <meta name="description" content="Browse our extensive collection of properties. Use advanced filters to find exactly what you're looking for." />
+</svelte:head>
 
-</style>
-
-<main>
-  <div class="content">
-    <div class="container">
-      <img class="image" src="/assets/4.jpg" alt="House" />
-
-      <div class="search-container">
-        <select class="search-option" id="locationFilter">
-          <option value="">All Locations</option>
-          <option value="Los Angeles">Los Angeles</option>
-          <option value="New York">New York</option>
-          <option value="Chicago">Chicago</option>
-          <option value="Miami">Miami</option>
+<!-- Header Section -->
+<section class="py-12 bg-slate-900 text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-4xl font-bold mb-2">Property Listings</h1>
+        <p class="text-slate-300">
+          {data.properties.length} properties available
+          {#if hasActiveFilters}
+            <span class="text-slate-400">• Filtered results</span>
+          {/if}
+        </p>
+      </div>
+      
+      <!-- View Toggle & Sort -->
+      <div class="hidden md:flex items-center gap-4">
+        <div class="flex bg-slate-800 rounded-lg p-1">
+          <button
+            on:click={() => viewMode = 'grid'}
+            class="px-4 py-2 rounded-lg transition-all {viewMode === 'grid' ? 'bg-white text-slate-900' : 'text-slate-400 hover:text-white'}"
+          >
+            <i class="fas fa-th"></i>
+          </button>
+          <button
+            on:click={() => viewMode = 'list'}
+            class="px-4 py-2 rounded-lg transition-all {viewMode === 'list' ? 'bg-white text-slate-900' : 'text-slate-400 hover:text-white'}"
+          >
+            <i class="fas fa-list"></i>
+          </button>
+        </div>
+        
+        <select
+          bind:value={sortBy}
+          on:change={applyFilters}
+          class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-white focus:ring-2 focus:ring-white/20 outline-none"
+        >
+          {#each sortOptions as option}
+            <option value={option.value}>{option.label}</option>
+          {/each}
         </select>
-
-        <div class="vertical-line"></div>
-
-        <select class="search-option" id="typeFilter">
-          <option value="">All Types</option>
-          <option value="Villa">Villa</option>
-          <option value="Apartment">Apartment</option>
-          <option value="Townhouse">Townhouse</option>
-          <option value="Single-Family Home">Single-Family Home</option>
-        </select>
-
-        <div class="vertical-line"></div>
-
-        <select class="search-option" id="priceFilter">
-          <option value="">All Prices</option>
-          <option value="100000">Below $100,000</option>
-          <option value="200000">$100,000 - $200,000</option>
-          <option value="300000">$200,000 - $300,000</option>
-          <option value="400000">$300,000 - $400,000</option>
-          <option value="500000">$400,000+</option>
-        </select>
-
-        <div class="vertical-line"></div>
-
-        <select class="search-option" id="bedsFilter">
-          <option value="">All Bedrooms</option>
-          <option value="1">1 Bedroom</option>
-          <option value="2">2 Bedrooms</option>
-          <option value="3">3 Bedrooms</option>
-          <option value="4">4+ Bedrooms</option>
-        </select>
-
-        <div class="vertical-line"></div>
-
-        <select class="search-option" id="bathsFilter">
-          <option value="">All Bathrooms</option>
-          <option value="1">1 Bathroom</option>
-          <option value="2">2 Bathrooms</option>
-          <option value="3">3 Bathrooms</option>
-          <option value="4">4+ Bathrooms</option>
-        </select>
-
-        <div class="vertical-line"></div>
-
-        <select class="search-option" id="sqftFilter">
-          <option value="">All Sq Ft</option>
-          <option value="500">Below 500 sq ft</option>
-          <option value="1000">500 - 1000 sq ft</option>
-          <option value="1500">1000 - 1500 sq ft</option>
-          <option value="2000">1500 - 2000 sq ft</option>
-          <option value="2500">2000+ sq ft</option>
-        </select>
-
-        <button class="search-button">Search</button>
       </div>
     </div>
+    
+    <!-- Quick Search Bar -->
+    <div class="flex gap-3">
+      <div class="flex-1 relative">
+        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input
+          type="text"
+          bind:value={searchQuery}
+          on:keydown={(e) => e.key === 'Enter' && applyFilters()}
+          placeholder="Search by location, address, or property type..."
+          class="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:border-white focus:ring-2 focus:ring-white/20 outline-none"
+        />
+      </div>
+      <button
+        on:click={applyFilters}
+        class="px-8 py-3 bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-all"
+      >
+        Search
+      </button>
+      <button
+        on:click={() => showFilters = !showFilters}
+        class="px-6 py-3 bg-slate-800 border border-slate-700 text-white rounded-lg hover:bg-slate-700 transition-all md:hidden"
+      >
+        <i class="fas fa-filter"></i>
+      </button>
+    </div>
+  </div>
+</section>
 
-    <div class="category-section">
-      <p class="properties">Houseo properties</p>
-      <h2 class="recommended">Recommended for you</h2>
-      <div class="tabs">
-        <div class="tab">Villa</div>
-        <div class="tab">Apartment</div>
-        <div class="tab">Townhouse</div>
-        <div class="tab">Single-Family Home</div>
-        <div class="tab">Vacation Home</div>
-        <div class="tab">Condo</div>
+<!-- Main Content -->
+<section class="py-8 bg-slate-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex gap-8">
+      
+      <!-- Filters Sidebar -->
+      {#if showFilters}
+        <aside 
+          class="w-80 flex-shrink-0 space-y-6"
+          in:fly={{ x: -20, duration: 400, easing: quintOut }}
+        >
+          <!-- Active Filters -->
+          {#if hasActiveFilters}
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-slate-900">Active Filters</h3>
+                <button
+                  on:click={clearFilters}
+                  class="text-sm text-slate-600 hover:text-slate-900 transition-colors"
+                >
+                  Clear All
+                </button>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                {#if searchQuery}
+                  <span class="px-3 py-1 bg-slate-100 text-slate-700 text-sm rounded-full flex items-center gap-2">
+                    {searchQuery}
+                    <button on:click={() => { searchQuery = ''; applyFilters(); }} class="hover:text-slate-900">×</button>
+                  </span>
+                {/if}
+                {#if selectedType}
+                  <span class="px-3 py-1 bg-slate-100 text-slate-700 text-sm rounded-full flex items-center gap-2">
+                    {selectedType}
+                    <button on:click={() => { selectedType = ''; applyFilters(); }} class="hover:text-slate-900">×</button>
+                  </span>
+                {/if}
+                {#if minPrice || maxPrice}
+                  <span class="px-3 py-1 bg-slate-100 text-slate-700 text-sm rounded-full flex items-center gap-2">
+                    ${minPrice || '0'} - ${maxPrice || 'Any'}
+                    <button on:click={() => { minPrice = ''; maxPrice = ''; applyFilters(); }} class="hover:text-slate-900">×</button>
+                  </span>
+                {/if}
+              </div>
+            </div>
+          {/if}
+          
+          <!-- Property Type -->
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-semibold text-slate-900 mb-4">Property Type</h3>
+            <div class="space-y-2">
+              <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
+                <input
+                  type="radio"
+                  bind:group={selectedType}
+                  value=""
+                  on:change={applyFilters}
+                  class="w-4 h-4 text-slate-900 focus:ring-slate-900"
+                />
+                <span class="text-slate-700">All Types</span>
+              </label>
+              {#each data.filters.types as type}
+                <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
+                  <input
+                    type="radio"
+                    bind:group={selectedType}
+                    value={type}
+                    on:change={applyFilters}
+                    class="w-4 h-4 text-slate-900 focus:ring-slate-900"
+                  />
+                  <span class="text-slate-700">{type}</span>
+                </label>
+              {/each}
+            </div>
+          </div>
+          
+          <!-- Price Range -->
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-semibold text-slate-900 mb-4">Price Range</h3>
+            <div class="space-y-4">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-xs text-slate-600 mb-1 block">Min Price</label>
+                  <input
+                    type="number"
+                    bind:value={minPrice}
+                    placeholder="No min"
+                    class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:border-slate-900 focus:ring-2 focus:ring-slate-100 outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="text-xs text-slate-600 mb-1 block">Max Price</label>
+                  <input
+                    type="number"
+                    bind:value={maxPrice}
+                    placeholder="No max"
+                    class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:border-slate-900 focus:ring-2 focus:ring-slate-100 outline-none"
+                  />
+                </div>
+              </div>
+              <button
+                on:click={applyFilters}
+                class="w-full py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-all"
+              >
+                Apply Price Range
+              </button>
+            </div>
+          </div>
+          
+          <!-- Bedrooms -->
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-semibold text-slate-900 mb-4">Bedrooms</h3>
+            <div class="grid grid-cols-3 gap-2">
+              {#each ['', '1', '2', '3', '4', '5'] as beds}
+                <button
+                  on:click={() => { selectedBedrooms = beds; applyFilters(); }}
+                  class="px-4 py-2 rounded-lg font-medium transition-all {selectedBedrooms === beds 
+                    ? 'bg-slate-900 text-white' 
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}"
+                >
+                  {beds ? `${beds}+` : 'Any'}
+                </button>
+              {/each}
+            </div>
+          </div>
+          
+          <!-- Bathrooms -->
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-semibold text-slate-900 mb-4">Bathrooms</h3>
+            <div class="grid grid-cols-3 gap-2">
+              {#each ['', '1', '2', '3', '4'] as baths}
+                <button
+                  on:click={() => { selectedBathrooms = baths; applyFilters(); }}
+                  class="px-4 py-2 rounded-lg font-medium transition-all {selectedBathrooms === baths 
+                    ? 'bg-slate-900 text-white' 
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}"
+                >
+                  {baths ? `${baths}+` : 'Any'}
+                </button>
+              {/each}
+            </div>
+          </div>
+          
+          <!-- Quick Stats -->
+          <div class="bg-slate-900 rounded-xl p-6 text-white">
+            <h3 class="font-semibold mb-4">Quick Stats</h3>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-slate-400">Total Properties</span>
+                <span class="font-semibold">{data.properties.length}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Saved</span>
+                <span class="font-semibold">{savedProperties.length}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Comparing</span>
+                <span class="font-semibold">{compareList.length}/3</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      {/if}
+      
+      <!-- Properties Grid/List -->
+      <div class="flex-1">
+        {#if data.properties.length > 0}
+          <!-- Compare Bar -->
+          {#if compareList.length > 0}
+            <div class="mb-6 bg-slate-900 rounded-xl p-4 text-white flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <i class="fas fa-balance-scale text-xl"></i>
+                <span class="font-semibold">{compareList.length} properties selected for comparison</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <button
+                  on:click={() => showCompareModal = true}
+                  class="px-4 py-2 bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-all"
+                  disabled={compareList.length < 2}
+                >
+                  Compare Now
+                </button>
+                <button
+                  on:click={() => compareList = []}
+                  class="px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-all"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          {/if}
+          
+          <div class="{viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}">
+            {#each data.properties as property, i}
+              {#if viewMode === 'grid'}
+                <!-- Grid View Card -->
+                <article
+                  class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 group"
+                  in:fly={{ y: 20, duration: 500, delay: staggerDelay(i), easing: quintOut }}
+                >
+                  <div class="relative h-56 overflow-hidden">
+                    <img
+                      src={property.image}
+                      alt={property.location}
+                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="absolute top-3 right-3 flex gap-2">
+                      <button
+                        on:click={() => toggleSave(property.id)}
+                        class="w-10 h-10 rounded-full {savedProperties.includes(property.id) ? 'bg-red-500 text-white' : 'bg-white/90 text-slate-700'} backdrop-blur-sm flex items-center justify-center hover:scale-110 transition-transform shadow-md"
+                      >
+                        <i class="fas fa-heart"></i>
+                      </button>
+                      <button
+                        on:click={() => toggleCompare(property.id)}
+                        class="w-10 h-10 rounded-full {compareList.includes(property.id) ? 'bg-slate-900 text-white' : 'bg-white/90 text-slate-700'} backdrop-blur-sm flex items-center justify-center hover:scale-110 transition-transform shadow-md"
+                      >
+                        <i class="fas fa-balance-scale"></i>
+                      </button>
+                    </div>
+                    
+                    <div class="absolute top-3 left-3 px-3 py-1 bg-white/95 backdrop-blur-sm rounded-full text-sm font-semibold text-slate-900">
+                      {property.type}
+                    </div>
+                  </div>
+                  
+                  <div class="p-5">
+                    <div class="mb-3">
+                      <h3 class="text-xl font-bold text-slate-900 mb-1">{property.location}</h3>
+                      <p class="text-sm text-slate-600 flex items-center gap-1">
+                        <i class="fas fa-map-marker-alt text-slate-400"></i>
+                        {property.address}
+                      </p>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-4 text-sm text-slate-600">
+                      <span><i class="fas fa-bed text-slate-400"></i> {property.bedrooms}</span>
+                      <span><i class="fas fa-bath text-slate-400"></i> {property.bathrooms}</span>
+                      <span><i class="fas fa-ruler-combined text-slate-400"></i> {property.square_foot} sqft</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+                      <span class="text-2xl font-bold text-slate-900">{formatPrice(property.price)}</span>
+                      <a
+                        href="/details/{property.id}"
+                        class="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-all"
+                      >
+                        View Details
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              {:else}
+                <!-- List View Card -->
+                <article
+                  class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group"
+                  in:fly={{ x: -20, duration: 500, delay: staggerDelay(i), easing: quintOut }}
+                >
+                  <div class="flex gap-6 p-6">
+                    <div class="relative w-80 h-52 flex-shrink-0 overflow-hidden rounded-lg">
+                      <img
+                        src={property.image}
+                        alt={property.location}
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div class="absolute top-3 left-3 px-3 py-1 bg-white/95 backdrop-blur-sm rounded-full text-sm font-semibold text-slate-900">
+                        {property.type}
+                      </div>
+                    </div>
+                    
+                    <div class="flex-1 flex flex-col justify-between">
+                      <div>
+                        <div class="flex items-start justify-between mb-2">
+                          <div>
+                            <h3 class="text-2xl font-bold text-slate-900 mb-1">{property.location}</h3>
+                            <p class="text-slate-600 flex items-center gap-1">
+                              <i class="fas fa-map-marker-alt text-slate-400"></i>
+                              {property.address}
+                            </p>
+                          </div>
+                          <div class="flex gap-2">
+                            <button
+                              on:click={() => toggleSave(property.id)}
+                              class="w-10 h-10 rounded-full {savedProperties.includes(property.id) ? 'bg-red-500 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center hover:scale-110 transition-transform"
+                            >
+                              <i class="fas fa-heart"></i>
+                            </button>
+                            <button
+                              on:click={() => toggleCompare(property.id)}
+                              class="w-10 h-10 rounded-full {compareList.includes(property.id) ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center hover:scale-110 transition-transform"
+                            >
+                              <i class="fas fa-balance-scale"></i>
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-6 mb-4 text-slate-600">
+                          <span class="flex items-center gap-2">
+                            <i class="fas fa-bed text-slate-400"></i>
+                            {property.bedrooms} Bedrooms
+                          </span>
+                          <span class="flex items-center gap-2">
+                            <i class="fas fa-bath text-slate-400"></i>
+                            {property.bathrooms} Bathrooms
+                          </span>
+                          <span class="flex items-center gap-2">
+                            <i class="fas fa-ruler-combined text-slate-400"></i>
+                            {property.square_foot} sqft
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+                        <span class="text-3xl font-bold text-slate-900">{formatPrice(property.price)}</span>
+                        <a
+                          href="/details/{property.id}"
+                          class="px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-all"
+                        >
+                          View Details
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              {/if}
+            {/each}
+          </div>
+        {:else}
+          <div class="text-center py-20 bg-white rounded-2xl shadow-md">
+            <i class="fas fa-search text-6xl text-slate-300 mb-4"></i>
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">No Properties Found</h3>
+            <p class="text-slate-600 mb-6">Try adjusting your filters or search criteria</p>
+            <button
+              on:click={clearFilters}
+              class="px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-all"
+            >
+              Clear All Filters
+            </button>
+          </div>
+        {/if}
       </div>
     </div>
   </div>
-  <section class="card-grid-section">
-  {#each data.properties as property (property.id)}
-    <div class="property-card">
-      <div class="image-container">
-        <img src={property.image} alt="House" class="property-image" />
+</section>
+
+<!-- Compare Modal -->
+{#if showCompareModal}
+  <div 
+    class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+    on:click={() => showCompareModal = false}
+    transition:fade={{ duration: 200 }}
+  >
+    <div 
+      class="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto"
+      on:click|stopPropagation
+      in:scale={{ duration: 300, easing: quintOut }}
+    >
+      <div class="sticky top-0 bg-white border-b border-slate-200 p-6 flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-slate-900">Compare Properties</h2>
+        <button
+          on:click={() => showCompareModal = false}
+          class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+        >
+          <i class="fas fa-times text-slate-600"></i>
+        </button>
       </div>
-      <div class="property-info">
-        <h3 class="property-name">{property.location} — {property.type}</h3>
-        <p class="property-address">{property.address}</p>
-        <hr />
-        <div class="property-stats">
-          <div class="stat">
-            <i class="fas fa-ruler-combined icon"></i>
-            <span>{property.square_foot} sqft</span>
-          </div>
-          <div class="stat">
-            <i class="fas fa-bath icon"></i>
-            <span>{property.bathrooms} Bath{property.bathrooms > 1 ? 's' : ''}</span>
-          </div>
-          <div class="stat">
-            <i class="fas fa-bed icon"></i>
-            <span>{property.bedrooms} Bed{property.bedrooms > 1 ? 's' : ''}</span>
-          </div>
-        </div>
-        <hr />
-        <div class="property-price-type">
-          <span class="property-price">${property.price.toLocaleString()}</span>
-          <span class="property-type">{property.type}</span>
-        </div>
-        <div class="property-footer">
-          <a href="/details/{property.id}" class="details-button">View Details</a>
+      
+      <div class="p-6">
+        <div class="grid grid-cols-{compareProperties.length} gap-6">
+          {#each compareProperties as property}
+            <div class="border border-slate-200 rounded-xl overflow-hidden">
+              <img src={property.image} alt={property.location} class="w-full h-48 object-cover" />
+              <div class="p-4 space-y-3">
+                <h3 class="font-bold text-lg">{property.location}</h3>
+                <div class="space-y-2 text-sm">
+                  <div class="flex justify-between py-2 border-b border-slate-100">
+                    <span class="text-slate-600">Price</span>
+                    <span class="font-semibold">{formatPrice(property.price)}</span>
+                  </div>
+                  <div class="flex justify-between py-2 border-b border-slate-100">
+                    <span class="text-slate-600">Type</span>
+                    <span class="font-semibold">{property.type}</span>
+                  </div>
+                  <div class="flex justify-between py-2 border-b border-slate-100">
+                    <span class="text-slate-600">Bedrooms</span>
+                    <span class="font-semibold">{property.bedrooms}</span>
+                  </div>
+                  <div class="flex justify-between py-2 border-b border-slate-100">
+                    <span class="text-slate-600">Bathrooms</span>
+                    <span class="font-semibold">{property.bathrooms}</span>
+                  </div>
+                  <div class="flex justify-between py-2 border-b border-slate-100">
+                    <span class="text-slate-600">Square Feet</span>
+                    <span class="font-semibold">{property.square_foot}</span>
+                  </div>
+                </div>
+                <a
+                  href="/details/{property.id}"
+                  class="block text-center py-2 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-all mt-4"
+                >
+                  View Details
+                </a>
+              </div>
+            </div>
+          {/each}
         </div>
       </div>
     </div>
-  {/each}
-</section>
-
-</main>
+  </div>
+{/if}

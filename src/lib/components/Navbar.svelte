@@ -70,22 +70,20 @@
 					class="flex items-center gap-2.5 group"
 					in:fly={{ x: -20, duration: 600, delay: 100 }}
 				>
-					<!-- Animated Logo Icon -->
+					<!-- Logo Icon -->
 					<div class="relative">
 						<svg 
-							class="w-8 h-8 text-sky-600 group-hover:text-sky-700 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" 
+							class="w-8 h-8 text-slate-900 group-hover:text-slate-700 transition-all duration-300 group-hover:scale-110" 
 							viewBox="0 0 32 32" 
 							fill="none"
 						>
-							<path d="M4 12L16 4L28 12V26C28 27.1046 27.1046 28 26 28H6C4.89543 28 4 27.1046 4 26V12Z" fill="currentColor" opacity="0.2"/>
+							<path d="M4 12L16 4L28 12V26C28 27.1046 27.1046 28 26 28H6C4.89543 28 4 27.1046 4 26V12Z" fill="currentColor" opacity="0.1"/>
 							<path d="M4 12L16 4L28 12M4 12V26C4 27.1046 4.89543 28 6 28H26C27.1046 28 28 27.1046 28 26V12M4 12L6 13.5M28 12L26 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 							<path d="M12 28V18H20V28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
-						<!-- Animated glow -->
-						<div class="absolute -inset-2 bg-gradient-to-r from-sky-400 to-orange-400 rounded-full blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500 -z-10 animate-pulse"></div>
 					</div>
 					
-					<span class="text-2xl font-bold bg-gradient-to-r from-sky-600 via-sky-500 to-orange-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+					<span class="text-2xl font-bold text-slate-900">
 						Houseo
 					</span>
 				</a>
@@ -101,17 +99,16 @@
 						>
 							<span class="relative z-10">{link.label}</span>
 							
-							<!-- Active indicator with scale animation -->
+							<!-- Active indicator -->
 							{#if isActive(link.href)}
 								<span 
-									class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sky-600 to-orange-500 rounded-full"
+									class="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900 rounded-full"
 									in:slide={{ duration: 300 }}
 								></span>
 							{/if}
 							
-							<!-- Sophisticated hover effect -->
-							<span class="absolute inset-0 bg-gradient-to-r from-sky-50 to-orange-50 opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-300 -z-10"></span>
-							<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-3/4 h-0.5 bg-sky-200 transition-all duration-500 rounded-full"></span>
+							<!-- Hover effect -->
+							<span class="absolute inset-0 bg-slate-50 opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-300 -z-10"></span>
 						</a>
 					{/each}
 				</div>
@@ -122,14 +119,11 @@
 				<!-- Enhanced CTA Button -->
 				<a
 					href="/contact"
-					class="hidden sm:inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-sky-600 via-sky-600 to-orange-500 bg-[length:200%_auto] hover:bg-right-bottom text-white text-sm font-semibold rounded-full transition-all duration-500 shadow-lg shadow-sky-600/30 hover:shadow-xl hover:shadow-sky-600/50 hover:-translate-y-0.5 hover:scale-105 relative overflow-hidden group"
+					class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
 					in:fly={{ x: 20, duration: 600, delay: 400 }}
 				>
-					<!-- Shimmer effect -->
-					<div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-					
-					<span class="relative">Get Started</span>
-					<svg class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<span>Get Started</span>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
 					</svg>
 				</a>
@@ -169,11 +163,9 @@
 				{#each navLinks as link, i}
 					<a
 						href={link.href}
-						class="flex items-center gap-3 px-4 py-3 text-base font-medium text-slate-700 hover:text-sky-600 hover:bg-gradient-to-r hover:from-sky-50 hover:to-orange-50 rounded-xl transition-all duration-300 group relative overflow-hidden"
-						class:bg-gradient-to-r={isActive(link.href)}
-						class:from-sky-50={isActive(link.href)}
-						class:to-orange-50={isActive(link.href)}
-						class:text-sky-600={isActive(link.href)}
+						class="flex items-center gap-3 px-4 py-3 text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all duration-300 group relative overflow-hidden"
+						class:bg-slate-100={isActive(link.href)}
+						class:text-slate-900={isActive(link.href)}
 						in:fly={{ x: -20, duration: 300, delay: staggerDelay(i), easing: elasticOut }}
 					>
 						<!-- Icon with animation -->
@@ -198,8 +190,6 @@
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
 						</svg>
 						
-						<!-- Animated background -->
-						<div class="absolute inset-0 bg-gradient-to-r from-sky-100/0 via-sky-100/50 to-orange-100/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 -z-10"></div>
 					</a>
 				{/each}
 				
@@ -210,13 +200,10 @@
 				>
 					<a
 						href="/contact"
-						class="flex items-center justify-center gap-2 w-full px-5 py-3 bg-gradient-to-r from-sky-600 to-orange-500 text-white font-semibold rounded-full shadow-lg shadow-sky-600/30 hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden group"
+						class="flex items-center justify-center gap-2 w-full px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
 					>
-						<!-- Shimmer effect -->
-						<div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-						
-						<span class="relative">Get Started</span>
-						<svg class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<span>Get Started</span>
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
 						</svg>
 					</a>
@@ -231,16 +218,10 @@
 
 <style>
 	.active {
-		color: #0284c7;
-	}
-	
-	@keyframes gradient {
-		0% { background-position: 0% 50%; }
-		50% { background-position: 100% 50%; }
-		100% { background-position: 0% 50%; }
-	}
-	
-	.animate-gradient {
-		animation: gradient 3s ease infinite;
+		color: #0f172a;
 	}
 </style>
+
+
+
+

@@ -127,17 +127,16 @@
 					<a href="/" class="inline-flex items-center gap-2.5 group mb-6">
 						<div class="relative">
 							<svg 
-								class="w-8 h-8 text-sky-600 group-hover:text-sky-700 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6" 
+								class="w-8 h-8 text-slate-900 group-hover:text-slate-700 transition-all duration-300 group-hover:scale-110" 
 								viewBox="0 0 32 32" 
 						fill="none"
 					>
-								<path d="M4 12L16 4L28 12V26C28 27.1046 27.1046 28 26 28H6C4.89543 28 4 27.1046 4 26V12Z" fill="currentColor" opacity="0.2"/>
+								<path d="M4 12L16 4L28 12V26C28 27.1046 27.1046 28 26 28H6C4.89543 28 4 27.1046 4 26V12Z" fill="currentColor" opacity="0.1"/>
 								<path d="M4 12L16 4L28 12M4 12V26C4 27.1046 4.89543 28 6 28H26C27.1046 28 28 27.1046 28 26V12M4 12L6 13.5M28 12L26 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 								<path d="M12 28V18H20V28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 					</svg>
-							<div class="absolute -inset-2 bg-gradient-to-r from-sky-400 to-orange-400 rounded-full blur-md opacity-0 group-hover:opacity-20 transition-opacity duration-500 -z-10"></div>
 						</div>
-						<span class="text-2xl font-bold bg-gradient-to-r from-sky-600 via-sky-500 to-orange-500 bg-clip-text text-transparent">
+						<span class="text-2xl font-bold text-slate-900">
 						{company.name}
 					</span>
 				</a>
@@ -183,7 +182,7 @@
 							>
 								<h3 class="text-slate-900 font-bold text-sm uppercase tracking-wider mb-4 relative inline-block">
 							{section.title}
-									<span class="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-sky-600 to-orange-500 rounded-full"></span>
+									<span class="absolute -bottom-1 left-0 w-8 h-0.5 bg-slate-900 rounded-full"></span>
 								</h3>
 								<ul class="space-y-3">
 									{#each section.links as link, linkIndex}
@@ -199,13 +198,13 @@
 												</span>
 												
 												{#if link.badge}
-													<span class="px-1.5 py-0.5 text-xs font-semibold bg-gradient-to-r from-sky-500 to-orange-500 text-white rounded-full animate-pulse">
+													<span class="px-1.5 py-0.5 text-xs font-semibold bg-slate-900 text-white rounded-full">
 														{link.badge}
 													</span>
 												{/if}
 												
 												<!-- Underline effect -->
-												<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-gradient-to-r from-sky-600 to-orange-500 group-hover:w-full transition-all duration-300 rounded-full"></span>
+												<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-slate-900 group-hover:w-full transition-all duration-300 rounded-full"></span>
 									</a>
 								</li>
 							{/each}
@@ -258,11 +257,9 @@
 							</div>
 							<button
 								type="submit"
-								class="px-6 py-2.5 bg-gradient-to-r from-sky-600 to-orange-500 hover:from-sky-700 hover:to-orange-600 text-white font-semibold rounded-lg text-sm transition-all duration-300 shadow-lg shadow-sky-600/30 hover:shadow-xl hover:-translate-y-0.5 hover:scale-105 relative overflow-hidden group"
+								class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg"
 							>
-								<span class="relative z-10">Subscribe</span>
-								<!-- Shimmer effect -->
-								<div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+								Subscribe
 							</button>
 						</form>
 						{:else}
@@ -299,7 +296,7 @@
 								in:fade={{ delay: 1100 + (i * 100) }}
 							>
 								{item}
-								<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-sky-600 group-hover:w-full transition-all duration-300"></span>
+								<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-slate-900 group-hover:w-full transition-all duration-300"></span>
 					</a>
 				{/each}
 			</div>
@@ -312,16 +309,13 @@
 	{#if isVisible}
 		<button
 			on:click={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-			class="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-sky-600 to-orange-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-110 flex items-center justify-center group z-40"
+			class="fixed bottom-8 right-8 w-12 h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex items-center justify-center group z-40"
 			in:scale={{ duration: 400, delay: 1200, easing: elasticOut }}
 			aria-label="Scroll to top"
 		>
 			<svg class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
 			</svg>
-			
-			<!-- Pulse ring -->
-			<div class="absolute inset-0 rounded-full border-2 border-sky-400 animate-ping opacity-20"></div>
 		</button>
 	{/if}
 </footer>
@@ -345,3 +339,8 @@
 		animation-delay: 4s;
 	}
 </style>
+
+
+
+
+

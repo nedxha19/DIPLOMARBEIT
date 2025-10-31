@@ -317,3 +317,6 @@ A **production-ready**, **professional**, **modern** navbar and footer that matc
 **Designed with ❤️ thinking like a real developer**  
 Inspired by: Stripe • Airbnb • Vercel • Linear
 
+
+
+
